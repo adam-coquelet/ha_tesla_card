@@ -11,6 +11,7 @@ class TeslaViewMain extends LitElement {
       entityMap: { attribute: false },
       _prevCharging: { state: true },
       _lastChargeState: { state: true },
+      _prevClimate: { state: true },
     };
   }
 
@@ -20,6 +21,7 @@ class TeslaViewMain extends LitElement {
   entityMap!: TeslaEntityMap;
   private _prevCharging: boolean = false;
   private _lastChargeState: TeslaVehicleState | null = null;
+  private _prevClimate: boolean = false;
 
   render() {
     const s = this.vehicleState;
@@ -49,7 +51,7 @@ class TeslaViewMain extends LitElement {
           ></tesla-vehicle-renderer>
         </div>
 
-        ${s.is_climate_on ? this._renderClimateBar(s) : ''}
+        ${this._renderClimatePanel(s)}
 
         <div class="actions-zone">
           <div class="actions">
@@ -114,24 +116,43 @@ class TeslaViewMain extends LitElement {
       </button>`;
   }
 
-  private _renderClimateBar(s: TeslaVehicleState) {
+  private _renderClimatePanel(s: TeslaVehicleState) {
+    const climateOn = s.is_climate_on;
+    const clClass = climateOn ? 'cl cl-in' : (this._prevClimate ? 'cl cl-out' : 'cl cl-hidden');
+    if (climateOn !== this._prevClimate) {
+      this._prevClimate = climateOn;
+    }
+    return html`
+      <div class="${clClass}" @animationend=${this._onClAnimEnd}>
+        ${this._renderClimateContent(s)}
+      </div>
+    `;
+  }
+
+  private _onClAnimEnd(e: AnimationEvent) {
+    if (e.animationName === 'cl-slide-out') {
+      const el = e.currentTarget as HTMLElement;
+      el.classList.add('cl-hidden');
+      el.classList.remove('cl-out');
+    }
+  }
+
+  private _renderClimateContent(s: TeslaVehicleState) {
     const target = s.climate_target_temp ?? 20;
     const inside = s.inside_temp;
     const outside = s.outside_temp;
     return html`
-      <div class="cl">
-        <div class="cl-inner">
-          <button class="cl-btn" @click=${this._tempUp}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE --><path fill="currentColor" d="M8.12 14.71L12 10.83l3.88 3.88a.996.996 0 1 0 1.41-1.41L12.7 8.71a.996.996 0 0 0-1.41 0L6.7 13.3a.996.996 0 0 0 0 1.41c.39.38 1.03.39 1.42 0"/></svg>
-          </button>
-          <div class="cl-target">${target}°</div>
-          <button class="cl-btn" @click=${this._tempDown}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE --><path fill="currentColor" d="M8.12 9.29L12 13.17l3.88-3.88a.996.996 0 1 1 1.41 1.41l-4.59 4.59a.996.996 0 0 1-1.41 0L6.7 10.7a.996.996 0 0 1 0-1.41c.39-.38 1.03-.39 1.42 0"/></svg>
-          </button>
-          <div class="cl-temps">
-            ${inside !== null ? html`<span>${inside}° int</span>` : ''}
-            ${outside !== null ? html`<span>${outside}° ext</span>` : ''}
-          </div>
+      <div class="cl-inner">
+        <button class="cl-btn" @click=${this._tempUp}>
+          <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M8.12 14.71L12 10.83l3.88 3.88a.996.996 0 1 0 1.41-1.41L12.7 8.71a.996.996 0 0 0-1.41 0L6.7 13.3a.996.996 0 0 0 0 1.41c.39.38 1.03.39 1.42 0"/></svg>
+        </button>
+        <div class="cl-target">${target}°</div>
+        <button class="cl-btn" @click=${this._tempDown}>
+          <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M8.12 9.29L12 13.17l3.88-3.88a.996.996 0 1 1 1.41 1.41l-4.59 4.59a.996.996 0 0 1-1.41 0L6.7 10.7a.996.996 0 0 1 0-1.41c.39-.38 1.03-.39 1.42 0"/></svg>
+        </button>
+        <div class="cl-temps">
+          ${inside !== null ? html`<span>${inside}° int</span>` : ''}
+          ${outside !== null ? html`<span>${outside}° ext</span>` : ''}
         </div>
       </div>
     `;
@@ -326,13 +347,27 @@ class TeslaViewMain extends LitElement {
         z-index: 5;
         pointer-events: none;
         background: linear-gradient(270deg, #1c1c1e, #1c1c1ecc 56%, #1c1c1e00);
-        animation: cl-slide-in 0.35s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
         padding-left: 48px;
+      }
+
+      .cl-hidden { display: none !important; }
+
+      .cl-in {
+        animation: cl-slide-in 0.35s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+      }
+
+      .cl-out {
+        animation: cl-slide-out 0.3s cubic-bezier(0.55,0.06,0.68,0.19) forwards;
       }
 
       @keyframes cl-slide-in {
         from { transform: translateX(100%); opacity: 0; }
         to   { transform: translateX(0); opacity: 1; }
+      }
+
+      @keyframes cl-slide-out {
+        from { transform: translateX(0); opacity: 1; }
+        to   { transform: translateX(100%); opacity: 0; }
       }
 
       .cl-inner {
