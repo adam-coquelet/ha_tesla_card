@@ -83,9 +83,8 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
 
   const isCharging = chargingSwitch?.state === 'on';
 
-  // Time: Tesla Fleet returns minutes, convert to hours
+  // Time to full: keep raw value, let the view format it
   const rawTime = getNumericState(hass, entityMap.time_to_full_charge);
-  const hoursToFull = rawTime !== null ? (rawTime > 10 ? rawTime / 60 : rawTime) : null;
 
   return {
     battery_level:          getNumericState(hass, entityMap.battery_level),
@@ -107,7 +106,7 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
     charge_rate:            getNumericState(hass, entityMap.charge_rate),
     charge_energy_added:    getNumericState(hass, entityMap.charge_energy_added),
     charger_voltage:        getNumericState(hass, entityMap.charger_voltage),
-    time_to_full_charge:    hoursToFull,
+    time_to_full_charge:    rawTime,
     odometer:               getNumericState(hass, entityMap.odometer),
     odometer_unit:          odometerEntity?.attributes?.unit_of_measurement || 'km',
     sentry_mode:            getBoolState(hass, entityMap.sentry_mode),

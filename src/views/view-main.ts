@@ -114,11 +114,11 @@ class TeslaViewMain extends LitElement {
   }
 
   private _renderChargeContent(s: TeslaVehicleState) {
-    const t = s.time_to_full_charge;
+    const rawMin = s.time_to_full_charge;
     let timeStr = '';
-    if (t !== null && t > 0) {
-      const h = Math.floor(t);
-      const m = Math.round((t - h) * 60);
+    if (rawMin !== null && rawMin > 0) {
+      const h = Math.floor(rawMin / 60);
+      const m = Math.round(rawMin % 60);
       const hr = this._t('hr'), mn = this._t('min'), rem = this._t('remaining');
       if (h > 0 && m > 0) timeStr = `${h} ${hr} ${m} ${mn} ${rem}`;
       else if (h > 0) timeStr = `${h} ${hr} ${rem}`;
@@ -340,7 +340,7 @@ class TeslaViewMain extends LitElement {
       .actions {
         display: flex;
         justify-content: space-around;
-        padding: 4px 8px 8px;
+        padding: 4px 8px 16px;
         position: relative;
       }
 
