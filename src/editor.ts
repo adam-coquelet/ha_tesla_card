@@ -84,7 +84,6 @@ class TeslaCardEditor extends LitElement {
         { name: 'entity_outside_temp', selector: { entity: { domain: 'sensor' } } },
       ]},
       { type: 'grid' as const, schema: [
-        { name: 'entity_odometer', selector: { entity: { domain: 'sensor' } } },
         { name: 'entity_charge_current_max', selector: { entity: { domain: 'number' } } },
       ]},
     ];
@@ -179,7 +178,12 @@ class TeslaCardEditor extends LitElement {
       }
       .section:first-child { margin-top: 0; }
       .compact {
+        --form-grid-row-gap: 0px;
         --ha-form-grid-row-gap: 0px;
+      }
+      .compact ha-form-grid {
+        gap: 0 !important;
+        row-gap: 0 !important;
       }
       ha-form { display: block; }
     `;
