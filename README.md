@@ -8,17 +8,19 @@ A premium Home Assistant Lovelace card that replicates the Tesla mobile app expe
 
 ## Features
 
-- **Real Tesla vehicle images** for Model 3, Model Y, Cybertruck, and Cybercab
+- **Real Tesla vehicle images** embedded (Model 3, Model Y, Cybertruck, Cybercab) — no external files needed
 - **All official paint colors** with automatic image matching per model/variant
 - **Standard, Long Range, and Performance** variants with correct wheels
 - **Charging panel** with animated green bar, time remaining, power stats (slides in/out)
 - **Climate control** with temperature adjustment (slides in/out)
 - **Vehicle reflection** and ambient color glow effect
 - **Battery indicator** with tap to toggle between % and range
-- **Action buttons**: Lock, Charge Port, Frunk, Vent Windows, Trunk, Climate
+- **Sentry mode indicator** in header
+- **Action buttons**: Lock, Charge Port, Frunk, Trunk, Vent Windows, Climate (each configurable)
 - **Fully translatable** (English & French built-in, auto-detected from HA)
-- **Visual config editor** with color-filtered selectors
-- **Tesla Fleet integration** compatible (standard HA entities)
+- **Native HA visual config editor** with entity pickers
+- **Tesla Fleet integration** compatible — supports translated entity names
+- **Single JS file** — all images embedded, no external dependencies
 
 ## Installation
 
@@ -33,17 +35,16 @@ A premium Home Assistant Lovelace card that replicates the Tesla mobile app expe
 ### Manual
 
 1. Download `tesla-card.js` from the [latest release](../../releases)
-2. Copy it to `config/www/community/ha-tesla-card/`
-3. Copy the `src/pictures/` folder to `config/www/community/ha-tesla-card/pictures/`
-4. Add the resource in **Settings** > **Dashboards** > **Resources**:
-   - URL: `/local/community/ha-tesla-card/tesla-card.js`
+2. Copy it to `config/www/tesla-card/`
+3. Add the resource in **Settings** > **Dashboards** > **Resources**:
+   - URL: `/local/tesla-card/tesla-card.js`
    - Type: JavaScript Module
 
 ## Configuration
 
 ### Visual Editor
 
-The card has a built-in visual editor accessible from the HA dashboard editor.
+The card has a built-in visual editor with native HA components (entity pickers, switches, selectors). Access it from the dashboard editor.
 
 ### YAML
 
@@ -63,7 +64,6 @@ paint_color: ultra_red
 | `vehicle_model` | string | `model_3` | `model_3`, `model_y`, `cybertruck`, `cybercab` |
 | `vehicle_variant` | string | `standard` | `standard`, `long_range`, `performance` |
 | `paint_color` | string | `pearl_white` | See paint colors below |
-| `image_path` | string | auto | Override path to vehicle images |
 | `show_lock` | boolean | `true` | Show Lock button |
 | `show_charge_port` | boolean | `true` | Show Charge Port button |
 | `show_frunk` | boolean | `true` | Show Frunk button |
@@ -84,24 +84,63 @@ paint_color: ultra_red
 
 > Available colors depend on model and variant. The editor automatically filters them.
 
-### Entity Prefix
+### Entity Overrides
 
-The `entity_prefix` is the slug name of your Tesla vehicle in Home Assistant. If your battery entity is `sensor.my_tesla_battery_level`, your prefix is `my_tesla`.
+By default, the card builds entity IDs from `entity_prefix` using the Tesla Fleet naming convention. **If your HA instance uses translated entity names** (e.g. French), the auto-detection won't work. Use the entity pickers in the visual editor, or set them in YAML:
 
-The card uses these standard Tesla Fleet entities:
+```yaml
+type: custom:tesla-card
+entity_prefix: tesla
+vehicle_model: model_y
+paint_color: quicksilver
+# Override entities for translated HA
+entity_battery_level: sensor.tesla_niveau_de_batterie
+entity_battery_range: sensor.tesla_autonomie
+entity_lock: lock.tesla_verrouillage
+entity_climate: climate.tesla_temperature_conducteur
+entity_charging: switch.tesla_etat_de_charge
+entity_sentry: switch.tesla_mode_sentinelle
+entity_frunk: cover.tesla_coffre_avant
+entity_trunk: cover.tesla_coffre_arriere
+entity_charge_port: cover.tesla_port_de_charge
+entity_windows: cover.tesla_fenetres
+entity_charge_limit: number.tesla_limite_de_charge
+entity_charger_power: sensor.tesla_puissance_du_chargeur
+entity_charge_rate: sensor.tesla_vitesse_de_charge
+entity_charge_energy: sensor.tesla_energie_ajoutee
+entity_charger_voltage: sensor.tesla_tension_du_chargeur
+entity_charger_current: sensor.tesla_courant_du_chargeur
+entity_time_to_full: sensor.tesla_minutes_avant_charge_complete
+entity_online: binary_sensor.tesla_etat
+entity_inside_temp: sensor.tesla_temperature_interieure
+entity_outside_temp: sensor.tesla_temperature_exterieure
+entity_odometer: sensor.tesla_compteur_kilometrique
+```
 
-| Domain | Entities |
-|--------|----------|
-| `sensor` | battery_level, battery_range, inside_temperature, outside_temperature, charging_power, charge_rate, charge_energy_added, charger_voltage, charger_current, time_to_full_charge, odometer |
-| `binary_sensor` | charging, online, user_present |
-| `climate` | climate |
-| `lock` | door_lock, charge_cable_lock |
-| `cover` | frunk, trunk, charger_door, windows |
-| `switch` | charging, sentry_mode, defrost, steering_wheel_heater |
-| `button` | honk_horn, flash_lights, wake |
-| `number` | charge_limit, charging_amps |
-| `device_tracker` | location |
-| `update` | firmware |
+### Default Entity Mapping (English HA)
+
+When no overrides are set, these Tesla Fleet entity IDs are used:
+
+| Function | Entity ID |
+|----------|-----------|
+| Battery Level | `sensor.{prefix}_charge_state_battery_level` |
+| Battery Range | `sensor.{prefix}_charge_state_battery_range` |
+| Door Lock | `lock.{prefix}_vehicle_state_locked` |
+| Climate | `climate.{prefix}_driver_temp` |
+| Frunk | `cover.{prefix}_vehicle_state_ft` |
+| Trunk | `cover.{prefix}_vehicle_state_rt` |
+| Charge Port | `cover.{prefix}_charge_state_charge_port_door_open` |
+| Windows | `cover.{prefix}_windows` |
+| Charging | `switch.{prefix}_charge_state_charging_state` |
+| Sentry Mode | `switch.{prefix}_vehicle_state_sentry_mode` |
+| Charger Power | `sensor.{prefix}_charge_state_charger_power` |
+| Charge Rate | `sensor.{prefix}_charge_state_charge_rate` |
+| Charge Limit | `number.{prefix}_charge_state_charge_limit_soc` |
+| Time to Full | `sensor.{prefix}_charge_state_minutes_to_full_charge` |
+| Online | `binary_sensor.{prefix}_state` |
+| Inside Temp | `sensor.{prefix}_climate_state_inside_temp` |
+| Outside Temp | `sensor.{prefix}_climate_state_outside_temp` |
+| Odometer | `sensor.{prefix}_vehicle_state_odometer` |
 
 ## Development
 
@@ -109,15 +148,18 @@ The card uses these standard Tesla Fleet entities:
 # Install dependencies
 npm install
 
-# Build
+# Build (encodes images + rollup)
 npm run build
 
-# Dev mode (watch)
+# Dev mode (watch — no image encoding)
 npm run dev
 
 # Run simulator
 npx http-server . -p 5050
 # Open http://localhost:5050/simulator/index.html
+
+# Release (bump version + build + commit + tag + GitHub release)
+npm run release
 ```
 
 ## License

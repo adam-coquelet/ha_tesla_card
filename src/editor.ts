@@ -27,6 +27,18 @@ const ENTITY_FIELDS: { key: string; label: string; domain?: string }[] = [
   { key: 'entity_odometer',       label: 'Odometer',         domain: 'sensor' },
 ];
 
+// Ensure HA custom elements are loaded
+const loadHaComponents = async () => {
+  if (customElements.get('ha-entity-picker')) return;
+  const helpers = await (window as any).loadCardHelpers?.();
+  if (helpers) {
+    // Creating a temporary entity-card forces HA to load its components
+    const el = await helpers.createCardElement({ type: 'entities', entities: [] });
+    if (el) el.hass = (document.querySelector('home-assistant') as any)?.hass;
+  }
+};
+loadHaComponents();
+
 class TeslaCardEditor extends LitElement {
   static get properties() {
     return {
