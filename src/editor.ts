@@ -36,25 +36,50 @@ class TeslaCardEditor extends LitElement {
         { name: 'show_vent', selector: { boolean: {} } },
         { name: 'show_climate', selector: { boolean: {} } },
       ]},
-      // Entity overrides
-      { name: 'entity_battery_level', selector: { entity: { domain: 'sensor' } } },
-      { name: 'entity_battery_range', selector: { entity: { domain: 'sensor' } } },
-      { name: 'entity_lock', selector: { entity: { domain: 'lock' } } },
-      { name: 'entity_climate', selector: { entity: { domain: 'climate' } } },
-      { name: 'entity_charging', selector: { entity: { domain: 'switch' } } },
-      { name: 'entity_sentry', selector: { entity: { domain: 'switch' } } },
-      { name: 'entity_frunk', selector: { entity: { domain: 'cover' } } },
-      { name: 'entity_trunk', selector: { entity: { domain: 'cover' } } },
-      { name: 'entity_charge_port', selector: { entity: { domain: 'cover' } } },
-      { name: 'entity_windows', selector: { entity: { domain: 'cover' } } },
-      { name: 'entity_charge_limit', selector: { entity: { domain: 'number' } } },
-      { name: 'entity_charger_power', selector: { entity: { domain: 'sensor' } } },
-      { name: 'entity_charge_rate', selector: { entity: { domain: 'sensor' } } },
-      { name: 'entity_time_to_full', selector: { entity: { domain: 'sensor' } } },
-      { name: 'entity_online', selector: { entity: { domain: 'binary_sensor' } } },
-      { name: 'entity_inside_temp', selector: { entity: { domain: 'sensor' } } },
-      { name: 'entity_outside_temp', selector: { entity: { domain: 'sensor' } } },
-      { name: 'entity_odometer', selector: { entity: { domain: 'sensor' } } },
+      // Entity overrides — 2 per row
+      { type: 'grid' as const, schema: [
+        { name: 'entity_battery_level', selector: { entity: { domain: 'sensor' } } },
+        { name: 'entity_battery_range', selector: { entity: { domain: 'sensor' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_lock', selector: { entity: { domain: 'lock' } } },
+        { name: 'entity_climate', selector: { entity: { domain: 'climate' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_charging', selector: { entity: { domain: 'switch' } } },
+        { name: 'entity_sentry', selector: { entity: { domain: 'switch' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_frunk', selector: { entity: { domain: 'cover' } } },
+        { name: 'entity_trunk', selector: { entity: { domain: 'cover' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_charge_port', selector: { entity: { domain: 'cover' } } },
+        { name: 'entity_windows', selector: { entity: { domain: 'cover' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_charge_limit', selector: { entity: { domain: 'number' } } },
+        { name: 'entity_charger_power', selector: { entity: { domain: 'sensor' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_charge_rate', selector: { entity: { domain: 'sensor' } } },
+        { name: 'entity_charge_energy', selector: { entity: { domain: 'sensor' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_charger_voltage', selector: { entity: { domain: 'sensor' } } },
+        { name: 'entity_charger_current', selector: { entity: { domain: 'sensor' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_time_to_full', selector: { entity: { domain: 'sensor' } } },
+        { name: 'entity_online', selector: { entity: { domain: 'binary_sensor' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_inside_temp', selector: { entity: { domain: 'sensor' } } },
+        { name: 'entity_outside_temp', selector: { entity: { domain: 'sensor' } } },
+      ]},
+      { type: 'grid' as const, schema: [
+        { name: 'entity_odometer', selector: { entity: { domain: 'sensor' } } },
+      ]},
     ];
   }
 
@@ -82,6 +107,9 @@ class TeslaCardEditor extends LitElement {
     entity_charge_limit: 'Charge Limit',
     entity_charger_power: 'Charger Power',
     entity_charge_rate: 'Charge Rate',
+    entity_charge_energy: 'Energy Added (kWh)',
+    entity_charger_voltage: 'Charger Voltage (V)',
+    entity_charger_current: 'Charger Current (A)',
     entity_time_to_full: 'Time to Full',
     entity_online: 'Online Status',
     entity_inside_temp: 'Inside Temp',
