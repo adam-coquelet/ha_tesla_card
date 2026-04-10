@@ -1,10 +1,10 @@
+<img src="icon.png" width="128" alt="Tesla Card">
+
 # Tesla Card for Home Assistant
 
 [![HACS Badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
 A premium Home Assistant Lovelace card that replicates the Tesla mobile app experience. Control your Tesla vehicle directly from your dashboard with real vehicle images, charging animations, and climate controls.
-
-![Tesla Card](icon.png)
 
 ## Features
 

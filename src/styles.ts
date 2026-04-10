@@ -38,6 +38,16 @@ export const cardStyles = css`
     padding: 12px 16px 0;
   }
 
+  .sentry-icon {
+    color: rgba(255,255,255,0.25);
+    margin-right: 8px;
+    transition: color 0.3s ease;
+  }
+
+  .sentry-icon.active {
+    color: #e31937;
+  }
+
   .battery-indicator {
     display: flex;
     align-items: center;

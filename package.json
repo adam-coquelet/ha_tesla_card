@@ -7,7 +7,8 @@
   "scripts": {
     "build": "rollup -c rollup.config.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
-    "simulator": "npx serve . -p 5050 -s --no-clipboard"
+    "simulator": "npx serve . -p 5050 -s --no-clipboard",
+    "version": "node scripts/sync-version.mjs && npm run build"
   },
   "devDependencies": {
     "lit": "^3.2.0",
