@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:developers.home-assistant.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.home-assistant.io)",
+      "WebFetch(domain:www.hacs.xyz)",
+      "WebFetch(domain:sergiocarracedo.es)",
+      "WebFetch(domain:teslemetry.com)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:www.tesla.com)",
+      "WebFetch(domain:pimpmyev.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm install:*)",
+      "Bash(npx rollup:*)",
+      "Bash(npx -y serve . -p 5050 -s)",
+      "Bash(start:*)",
+      "Bash(curl -s http://localhost:5050/simulator/)",
+      "Bash(taskkill //F //IM \"serve.exe\")",
+      "Bash(taskkill //F //IM \"node.exe\")",
+      "Bash(npx -y http-server . -p 5050 -c-1 --silent)",
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:teslaui.dkrasniy.com)",
+      "Bash(python3 -c \"from PIL import Image; img=Image.open\\('/c/dev/ha_tesla_card/src/pictures/MT369_PPSW_W38A_IPB3__m3.png'\\); print\\(f'Size: {img.size}'\\); bbox=img.getbbox\\(\\); print\\(f'Content bbox: {bbox}'\\)\")",
+      "Bash(python -c \"from PIL import Image; img=Image.open\\('/c/dev/ha_tesla_card/src/pictures/MT369_PPSW_W38A_IPB3__m3.png'\\); print\\(f'Size: {img.size}'\\); bbox=img.getbbox\\(\\); print\\(f'Content bbox: {bbox}'\\)\")",
+      "Bash(ls:*)"
+    ]
+  }
+}

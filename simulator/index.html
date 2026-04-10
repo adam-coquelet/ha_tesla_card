@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tesla Card Simulator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .layout {
+      display: flex;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      gap: 32px;
+    }
+
+    /* Card Preview */
+    .card-preview {
+      flex: 0 0 420px;
+      position: sticky;
+      top: 24px;
+      align-self: flex-start;
+    }
+
+    .card-preview h2 {
+      font-size: 14px;
+      color: #9e9e9e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    #card-root {
+      width: 100%;
+    }
+
+    /* Simulator Controls */
+    .sim-panel {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .sim-panel h2 {
+      font-size: 14px;
+      color: #9e9e9e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .sim-section {
+      background: #1c1c1e;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .sim-section h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4dd0e1;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sim-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .sim-row:last-child { border-bottom: none; }
+
+    .sim-row label {
+      font-size: 13px;
+      color: #aaa;
+      min-width: 120px;
+    }
+
+    .sim-row .value {
+      font-size: 13px;
+      font-weight: 500;
+      min-width: 50px;
+      text-align: right;
+      color: #e0e0e0;
+    }
+
+    /* Inputs */
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 140px;
+      height: 6px;
+      border-radius: 3px;
+      background: #333;
+      outline: none;
+      margin: 0 10px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #4dd0e1;
+      cursor: pointer;
+    }
+
+    select {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #222;
+      color: #e0e0e0;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    select:focus { outline: none; border-color: #4dd0e1; }
+
+    /* Toggle Switch */
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #333;
+      border-radius: 12px;
+      transition: background 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: #4dd0e1;
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* Service call log */
+    .log-section {
+      background: #1c1c1e;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .log-section h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4dd0e1;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #service-log {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      color: #aaa;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .log-entry .domain { color: #4dd0e1; }
+    .log-entry .service { color: #ffa726; }
+    .log-entry .time { color: #666; }
+
+    /* HA Custom Properties */
+    :root {
+      --primary-color: #4dd0e1;
+      --primary-text-color: #e0e0e0;
+      --secondary-text-color: #9e9e9e;
+      --card-background-color: #1c1c1e;
+      --ha-card-background: #1c1c1e;
+      --divider-color: #333;
+      --error-color: #e53935;
+      --success-color: #43a047;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        flex-direction: column;
+        padding: 16px;
+      }
+      .card-preview {
+        flex: none;
+        position: static;
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="card-preview">
+      <h2>Card Preview</h2>
+      <div id="card-root"></div>
+    </div>
+
+    <div class="sim-panel">
+      <h2>Simulator Controls</h2>
+
+      <!-- Vehicle Config -->
+      <div class="sim-section">
+        <h3>Vehicle Configuration</h3>
+        <div class="sim-row">
+          <label>Model</label>
+          <select id="sim-model">
+            <option value="model_3" selected>Model 3</option>
+            <option value="model_s">Model S</option>
+            <option value="model_x">Model X</option>
+            <option value="model_y">Model Y</option>
+            <option value="cybertruck">Cybertruck</option>
+          </select>
+        </div>
+        <div class="sim-row">
+          <label>Variant</label>
+          <select id="sim-variant">
+            <option value="standard" selected>Standard</option>
+            <option value="performance">Performance</option>
+          </select>
+        </div>
+        <div class="sim-row">
+          <label>Color</label>
+          <select id="sim-color">
+            <option value="pearl_white" selected>Pearl White</option>
+            <option value="ultra_red">Ultra Red</option>
+            <option value="quicksilver">Quicksilver</option>
+            <option value="diamond_black">Diamond Black</option>
+            <option value="deep_blue">Deep Blue Metallic</option>
+            <option value="stealth_grey">Stealth Grey</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Battery & Charging -->
+      <div class="sim-section">
+        <h3>Battery & Charging</h3>
+        <div class="sim-row">
+          <label>Battery Level</label>
+          <input type="range" id="sim-battery" min="0" max="100" value="76">
+          <span class="value" id="sim-battery-val">76%</span>
+        </div>
+        <div class="sim-row">
+          <label>Range</label>
+          <input type="range" id="sim-range" min="0" max="600" value="340">
+          <span class="value" id="sim-range-val">340 km</span>
+        </div>
+        <div class="sim-row">
+          <label>Charge Limit</label>
+          <input type="range" id="sim-charge-limit" min="50" max="100" value="80">
+          <span class="value" id="sim-charge-limit-val">80%</span>
+        </div>
+        <div class="sim-row">
+          <label>Charging</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-charging">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Charge Power</label>
+          <input type="range" id="sim-charge-power" min="0" max="250" value="0">
+          <span class="value" id="sim-charge-power-val">0 kW</span>
+        </div>
+      </div>
+
+      <!-- Vehicle State -->
+      <div class="sim-section">
+        <h3>Vehicle State</h3>
+        <div class="sim-row">
+          <label>Online</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-online" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Locked</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-locked" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Frunk Open</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-frunk">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Trunk Open</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-trunk">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Charge Port</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-chargeport">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Windows Open</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-windows">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Sentry Mode</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-sentry">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Climate -->
+      <div class="sim-section">
+        <h3>Climate</h3>
+        <div class="sim-row">
+          <label>Climate On</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-climate">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="sim-row">
+          <label>Target Temp</label>
+          <input type="range" id="sim-target-temp" min="15" max="30" value="21" step="0.5">
+          <span class="value" id="sim-target-temp-val">21°C</span>
+        </div>
+        <div class="sim-row">
+          <label>Inside Temp</label>
+          <input type="range" id="sim-inside-temp" min="-10" max="50" value="19">
+          <span class="value" id="sim-inside-temp-val">19°C</span>
+        </div>
+        <div class="sim-row">
+          <label>Outside Temp</label>
+          <input type="range" id="sim-outside-temp" min="-20" max="50" value="12">
+          <span class="value" id="sim-outside-temp-val">12°C</span>
+        </div>
+        <div class="sim-row">
+          <label>Defrost</label>
+          <label class="toggle">
+            <input type="checkbox" id="sim-defrost">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Service Call Log -->
+      <div class="log-section">
+        <h3>Service Calls Log</h3>
+        <div id="service-log">
+          <div class="log-entry" style="color:#666">Waiting for interactions...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stub ha-card for standalone rendering -->
+  <script>
+    if (!customElements.get('ha-card')) {
+      class HaCard extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: 'open' });
+          this.shadowRoot.innerHTML = `
+            <style>
+              :host {
+                display: block;
+                background: var(--ha-card-background, #1c1c1e);
+                border-radius: 16px;
+                overflow: hidden;
+                color: var(--primary-text-color, #e0e0e0);
+                box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+              }
+            </style>
+            <slot></slot>`;
+        }
+      }
+      customElements.define('ha-card', HaCard);
+    }
+  </script>
+
+  <script src="../dist/tesla-card.js" type="module"></script>
+  <script type="module">
+    const PREFIX = 'my_tesla';
+    let currentState = {};
+    let cardEl = null;
+
+    function makeStates(overrides = {}) {
+      const defaults = {
+        battery: 76,
+        range: 340,
+        chargeLimit: 80,
+        charging: false,
+        chargePower: 0,
+        online: true,
+        locked: true,
+        frunk: false,
+        trunk: false,
+        chargePort: false,
+        windows: false,
+        sentry: false,
+        climateOn: false,
+        targetTemp: 21,
+        insideTemp: 19,
+        outsideTemp: 12,
+        defrost: false,
+        odometer: 24530,
+      };
+
+      const s = { ...defaults, ...overrides };
+
+      return {
+        [`sensor.${PREFIX}_battery_level`]:         { state: String(s.battery), attributes: { unit_of_measurement: '%', device_class: 'battery' }, entity_id: `sensor.${PREFIX}_battery_level` },
+        [`sensor.${PREFIX}_battery_range`]:          { state: String(s.range), attributes: { unit_of_measurement: 'km' }, entity_id: `sensor.${PREFIX}_battery_range` },
+        [`lock.${PREFIX}_door_lock`]:                { state: s.locked ? 'locked' : 'unlocked', attributes: {}, entity_id: `lock.${PREFIX}_door_lock` },
+        [`lock.${PREFIX}_charge_cable_lock`]:        { state: 'locked', attributes: {}, entity_id: `lock.${PREFIX}_charge_cable_lock` },
+        [`binary_sensor.${PREFIX}_online`]:          { state: s.online ? 'on' : 'off', attributes: {}, entity_id: `binary_sensor.${PREFIX}_online` },
+        [`binary_sensor.${PREFIX}_charging`]:        { state: s.charging ? 'on' : 'off', attributes: {}, entity_id: `binary_sensor.${PREFIX}_charging` },
+        [`binary_sensor.${PREFIX}_user_present`]:    { state: 'off', attributes: {}, entity_id: `binary_sensor.${PREFIX}_user_present` },
+        [`climate.${PREFIX}_climate`]:               { state: s.climateOn ? 'heat_cool' : 'off', attributes: { temperature: s.targetTemp, current_temperature: s.insideTemp, min_temp: 15, max_temp: 30 }, entity_id: `climate.${PREFIX}_climate` },
+        [`switch.${PREFIX}_charging`]:               { state: s.charging ? 'on' : 'off', attributes: {}, entity_id: `switch.${PREFIX}_charging` },
+        [`switch.${PREFIX}_sentry_mode`]:            { state: s.sentry ? 'on' : 'off', attributes: {}, entity_id: `switch.${PREFIX}_sentry_mode` },
+        [`switch.${PREFIX}_defrost`]:                { state: s.defrost ? 'on' : 'off', attributes: {}, entity_id: `switch.${PREFIX}_defrost` },
+        [`switch.${PREFIX}_steering_wheel_heater`]:  { state: 'off', attributes: {}, entity_id: `switch.${PREFIX}_steering_wheel_heater` },
+        [`cover.${PREFIX}_frunk`]:                   { state: s.frunk ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_frunk` },
+        [`cover.${PREFIX}_trunk`]:                   { state: s.trunk ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_trunk` },
+        [`cover.${PREFIX}_charger_door`]:            { state: s.chargePort ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_charger_door` },
+        [`cover.${PREFIX}_windows`]:                 { state: s.windows ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_windows` },
+        [`sensor.${PREFIX}_inside_temperature`]:     { state: String(s.insideTemp), attributes: { unit_of_measurement: '°C' }, entity_id: `sensor.${PREFIX}_inside_temperature` },
+        [`sensor.${PREFIX}_outside_temperature`]:    { state: String(s.outsideTemp), attributes: { unit_of_measurement: '°C' }, entity_id: `sensor.${PREFIX}_outside_temperature` },
+        [`sensor.${PREFIX}_odometer`]:               { state: String(s.odometer), attributes: { unit_of_measurement: 'km' }, entity_id: `sensor.${PREFIX}_odometer` },
+        [`sensor.${PREFIX}_charging_power`]:         { state: s.charging ? String(s.chargePower) : '0', attributes: { unit_of_measurement: 'kW' }, entity_id: `sensor.${PREFIX}_charging_power` },
+        [`sensor.${PREFIX}_charge_rate`]:            { state: s.charging ? String(Math.round(s.chargePower * 3.5)) : '0', attributes: { unit_of_measurement: 'km/h' }, entity_id: `sensor.${PREFIX}_charge_rate` },
+        [`sensor.${PREFIX}_charge_energy_added`]:    { state: s.charging ? '12.4' : '0', attributes: { unit_of_measurement: 'kWh' }, entity_id: `sensor.${PREFIX}_charge_energy_added` },
+        [`sensor.${PREFIX}_charger_voltage`]:        { state: s.charging ? '240' : '0', attributes: { unit_of_measurement: 'V' }, entity_id: `sensor.${PREFIX}_charger_voltage` },
+        [`sensor.${PREFIX}_charger_current`]:        { state: s.charging ? '32' : '0', attributes: { unit_of_measurement: 'A' }, entity_id: `sensor.${PREFIX}_charger_current` },
+        [`sensor.${PREFIX}_time_to_full_charge`]:    { state: s.charging ? '1.5' : '0', attributes: { unit_of_measurement: 'h' }, entity_id: `sensor.${PREFIX}_time_to_full_charge` },
+        [`number.${PREFIX}_charge_limit`]:           { state: String(s.chargeLimit), attributes: { min: 50, max: 100, step: 1 }, entity_id: `number.${PREFIX}_charge_limit` },
+        [`number.${PREFIX}_charging_amps`]:          { state: '32', attributes: { min: 0, max: 48 }, entity_id: `number.${PREFIX}_charging_amps` },
+        [`button.${PREFIX}_honk_horn`]:              { state: 'unknown', attributes: {}, entity_id: `button.${PREFIX}_honk_horn` },
+        [`button.${PREFIX}_flash_lights`]:           { state: 'unknown', attributes: {}, entity_id: `button.${PREFIX}_flash_lights` },
+        [`button.${PREFIX}_wake`]:                   { state: 'unknown', attributes: {}, entity_id: `button.${PREFIX}_wake` },
+        [`device_tracker.${PREFIX}_location`]:       { state: 'not_home', attributes: { latitude: 48.8566, longitude: 2.3522 }, entity_id: `device_tracker.${PREFIX}_location` },
+        [`select.${PREFIX}_seat_heater_front_left`]: { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_front_left` },
+        [`select.${PREFIX}_seat_heater_front_right`]:{ state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_front_right` },
+        [`select.${PREFIX}_seat_heater_rear_left`]:  { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_rear_left` },
+        [`select.${PREFIX}_seat_heater_rear_right`]: { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_rear_right` },
+        [`update.${PREFIX}_firmware`]:               { state: 'off', attributes: { installed_version: '2024.38.1', latest_version: '2024.38.1' }, entity_id: `update.${PREFIX}_firmware` },
+      };
+    }
+
+    function logService(domain, service, data) {
+      const log = document.getElementById('service-log');
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `<span class="time">${time}</span> <span class="domain">${domain}</span>.<span class="service">${service}</span> ${JSON.stringify(data || {})}`;
+      log.prepend(entry);
+
+      // Apply service call effects to simulator state
+      handleServiceCall(domain, service, data);
+    }
+
+    function handleServiceCall(domain, service, data) {
+      const entityId = data?.entity_id || '';
+
+      if (domain === 'lock') {
+        const locked = service === 'lock';
+        document.getElementById('sim-locked').checked = locked;
+        updateState();
+      } else if (domain === 'cover') {
+        const open = service === 'open_cover';
+        if (entityId.includes('frunk')) { document.getElementById('sim-frunk').checked = open; }
+        else if (entityId.includes('trunk')) { document.getElementById('sim-trunk').checked = open; }
+        else if (entityId.includes('charger_door')) { document.getElementById('sim-chargeport').checked = open; }
+        else if (entityId.includes('windows')) { document.getElementById('sim-windows').checked = open; }
+        updateState();
+      } else if (domain === 'switch') {
+        const on = service === 'turn_on';
+        if (entityId.includes('sentry')) { document.getElementById('sim-sentry').checked = on; }
+        else if (entityId.includes('defrost')) { document.getElementById('sim-defrost').checked = on; }
+        else if (entityId.includes('charging')) { document.getElementById('sim-charging').checked = on; }
+        updateState();
+      } else if (domain === 'climate') {
+        if (service === 'turn_on') { document.getElementById('sim-climate').checked = true; }
+        else if (service === 'turn_off') { document.getElementById('sim-climate').checked = false; }
+        else if (service === 'set_temperature') {
+          document.getElementById('sim-target-temp').value = data.temperature;
+          document.getElementById('sim-target-temp-val').textContent = data.temperature + '°C';
+        }
+        updateState();
+      } else if (domain === 'number' && service === 'set_value') {
+        if (entityId.includes('charge_limit')) {
+          document.getElementById('sim-charge-limit').value = data.value;
+          document.getElementById('sim-charge-limit-val').textContent = data.value + '%';
+          updateState();
+        }
+      } else if (domain === 'select' && service === 'select_option') {
+        // Seat heater cycle - just log it
+      }
+    }
+
+    function getSimValues() {
+      return {
+        battery: parseInt(document.getElementById('sim-battery').value),
+        range: parseInt(document.getElementById('sim-range').value),
+        chargeLimit: parseInt(document.getElementById('sim-charge-limit').value),
+        charging: document.getElementById('sim-charging').checked,
+        chargePower: parseInt(document.getElementById('sim-charge-power').value),
+        online: document.getElementById('sim-online').checked,
+        locked: document.getElementById('sim-locked').checked,
+        frunk: document.getElementById('sim-frunk').checked,
+        trunk: document.getElementById('sim-trunk').checked,
+        chargePort: document.getElementById('sim-chargeport').checked,
+        windows: document.getElementById('sim-windows').checked,
+        sentry: document.getElementById('sim-sentry').checked,
+        climateOn: document.getElementById('sim-climate').checked,
+        targetTemp: parseFloat(document.getElementById('sim-target-temp').value),
+        insideTemp: parseInt(document.getElementById('sim-inside-temp').value),
+        outsideTemp: parseInt(document.getElementById('sim-outside-temp').value),
+        defrost: document.getElementById('sim-defrost').checked,
+      };
+    }
+
+    function updateState() {
+      if (!cardEl) return;
+      const vals = getSimValues();
+      currentState = makeStates(vals);
+
+      cardEl.hass = {
+        states: currentState,
+        callService: (domain, service, data) => {
+          logService(domain, service, data);
+          return Promise.resolve();
+        },
+        language: 'en',
+      };
+    }
+
+    function updateConfig() {
+      if (!cardEl) return;
+      const model = document.getElementById('sim-model').value;
+      const variant = document.getElementById('sim-variant').value;
+      const color = document.getElementById('sim-color').value;
+      cardEl.setConfig({
+        type: 'custom:tesla-card',
+        entity_prefix: PREFIX,
+        vehicle_model: model,
+        vehicle_variant: variant,
+        paint_color: color,
+        image_path: '../src/pictures',
+        name: 'My Tesla',
+      });
+      updateState();
+    }
+
+    function initSimulator() {
+      cardEl = document.createElement('tesla-card');
+      document.getElementById('card-root').appendChild(cardEl);
+
+      updateConfig();
+
+      // Config changes
+      document.getElementById('sim-model').addEventListener('change', updateConfig);
+      document.getElementById('sim-variant').addEventListener('change', updateConfig);
+      document.getElementById('sim-color').addEventListener('change', updateConfig);
+
+      // State changes - sliders
+      const sliderBindings = [
+        ['sim-battery', 'sim-battery-val', '%'],
+        ['sim-range', 'sim-range-val', ' km'],
+        ['sim-charge-limit', 'sim-charge-limit-val', '%'],
+        ['sim-charge-power', 'sim-charge-power-val', ' kW'],
+        ['sim-target-temp', 'sim-target-temp-val', '°C'],
+        ['sim-inside-temp', 'sim-inside-temp-val', '°C'],
+        ['sim-outside-temp', 'sim-outside-temp-val', '°C'],
+      ];
+
+      sliderBindings.forEach(([sliderId, valId, suffix]) => {
+        const slider = document.getElementById(sliderId);
+        const valEl = document.getElementById(valId);
+        slider.addEventListener('input', () => {
+          valEl.textContent = slider.value + suffix;
+          updateState();
+        });
+      });
+
+      // State changes - toggles
+      const toggleIds = [
+        'sim-charging', 'sim-online', 'sim-locked', 'sim-frunk', 'sim-trunk',
+        'sim-chargeport', 'sim-windows', 'sim-sentry', 'sim-climate', 'sim-defrost',
+      ];
+
+      toggleIds.forEach(id => {
+        document.getElementById(id).addEventListener('change', updateState);
+      });
+    }
+
+    // Boot: wait for the custom element to be registered then init
+    function waitForCard(retries = 30) {
+      if (customElements.get('tesla-card')) {
+        initSimulator();
+      } else if (retries > 0) {
+        setTimeout(() => waitForCard(retries - 1), 100);
+      } else {
+        document.getElementById('card-root').innerHTML =
+          '<div style="padding:24px;color:#e53935;background:#1c1c1e;border-radius:16px;">' +
+          '<strong>Card not loaded</strong><br><br>' +
+          'Run <code style="background:#333;padding:2px 6px;border-radius:4px">npm run build</code> then:<br>' +
+          '<code style="background:#333;padding:2px 6px;border-radius:4px">npx http-server . -p 5050</code><br>' +
+          'Open <code style="background:#333;padding:2px 6px;border-radius:4px">http://localhost:5050/simulator/index.html</code>' +
+          '</div>';
+      }
+    }
+    waitForCard();
+  </script>
+</body>
+</html>

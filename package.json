@@ -1,0 +1,22 @@
+{
+  "name": "ha-tesla-card",
+  "version": "1.0.0",
+  "description": "Tesla app-style Lovelace card for Home Assistant",
+  "main": "dist/tesla-card.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs",
+    "dev": "rollup -c rollup.config.mjs --watch",
+    "simulator": "npx serve . -p 5050 -s --no-clipboard"
+  },
+  "devDependencies": {
+    "lit": "^3.2.0",
+    "typescript": "^5.6.0",
+    "rollup": "^4.24.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "tslib": "^2.7.0"
+  },
+  "license": "MIT"
+}

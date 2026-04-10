@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { background: #111114; margin: 40px; }
+
+  .car-scene {
+    width: 450px;
+    position: relative;
+  }
+
+  /* Clip the transparent bottom of the PNG */
+  .car-clip {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  .car-clip img {
+    width: 100%;
+    display: block;
+  }
+
+  /* Reflection: same clip, flipped, overlapping */
+  .car-reflect {
+    height: 190px;
+    overflow: hidden;
+    transform: scaleY(-1);
+    margin-top: -12%;
+    position: relative;
+    z-index: 0;
+    mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%);
+    -webkit-mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%);
+    opacity: 0.4;
+    filter: blur(1px);
+  }
+  .car-reflect img {
+    width: 100%;
+    display: block;
+  }
+</style>
+</head>
+<body>
+  <div class="car-scene">
+    <div class="car-clip">
+      <img src="../src/pictures/MT369_PR01_W38A_IPB3__m3.png?v=6" />
+    </div>
+    <div class="car-reflect">
+      <img src="../src/pictures/MT369_PR01_W38A_IPB3__m3.png?v=6" />
+    </div>
+  </div>
+</body>
+</html>
