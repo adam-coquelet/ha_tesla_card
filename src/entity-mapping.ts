@@ -126,6 +126,7 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
     charge_rate:            getNumericState(hass, entityMap.charge_rate),
     charge_energy_added:    getNumericState(hass, entityMap.charge_energy_added),
     charger_voltage:        getNumericState(hass, entityMap.charger_voltage),
+    charger_current:        getNumericState(hass, entityMap.charger_current),
     time_to_full_charge:    timeToFullMin,
     odometer:               getNumericState(hass, entityMap.odometer),
     odometer_unit:          odometerEntity?.attributes?.unit_of_measurement || 'km',

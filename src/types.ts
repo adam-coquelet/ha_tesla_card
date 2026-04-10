@@ -98,6 +98,7 @@ export interface TeslaVehicleState {
   temp_unit: string;
   charge_limit: number | null;
   charge_current: number | null;
+  charger_current: number | null;
   charging_power: number | null;
   charge_rate: number | null;
   charge_energy_added: number | null;

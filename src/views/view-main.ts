@@ -142,7 +142,7 @@ class TeslaViewMain extends LitElement {
         <div class="cp-stat">${s.charging_power ?? '--'} kW</div>
         <div class="cp-stat">${s.charge_rate !== null ? Math.round(s.charge_rate) : '--'} ${ru}</div>
         <div class="cp-stat">+${s.charge_energy_added ?? '--'} kWh</div>
-        <div class="cp-stat">${s.charge_current ?? '--'}/${s.charge_current ?? '--'} A</div>
+        <div class="cp-stat">${s.charger_current ?? '--'}/${s.charge_current ?? '--'} A</div>
         <div class="cp-stat">${s.charger_voltage ?? '--'} V</div>
       </div>
     `;
