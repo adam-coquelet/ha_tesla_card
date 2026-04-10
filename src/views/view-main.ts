@@ -385,13 +385,15 @@ class TeslaViewMain extends LitElement {
       .cl {
         position: absolute;
         right: -2px;
-        top: 0;
-        bottom: 50px;
+        top: -30px;
+        padding-top: 30px;
+        padding-bottom: 50px;
+        bottom: 0;
         display: flex;
         align-items: center;
         z-index: 5;
         pointer-events: none;
-        background: linear-gradient(270deg, #1c1c1e, #1c1c1ecc 56%, #1c1c1e00);
+        background: linear-gradient(270deg, #1c1c1e, #1c1c1ecc 52%, #1c1c1e00);
         padding-left: 58px;
       }
 
