@@ -385,7 +385,7 @@ class TeslaViewMain extends LitElement {
       .cl {
         position: absolute;
         right: -2px;
-        top: -30px;
+        top: -34px;
         padding-top: 30px;
         padding-bottom: 50px;
         bottom: 0;
