@@ -18,16 +18,18 @@ class TeslaCardEditor extends LitElement {
     this._config = { ...DEFAULT_CONFIG, ...config };
   }
 
-  private _getSchema() {
+  private _vehicleSchema() {
     const colors = this._getColors();
-
     return [
-      // Vehicle section
       { name: 'entity_prefix', selector: { text: {} } },
-      { name: 'vehicle_model', selector: { select: { options: Object.entries(VEHICLE_MODELS).map(([k, v]) => ({ value: k, label: v })), mode: 'dropdown' } } },
-      { name: 'vehicle_variant', selector: { select: { options: Object.entries(VEHICLE_VARIANTS).map(([k, v]) => ({ value: k, label: v })), mode: 'dropdown' } } },
-      { name: 'paint_color', selector: { select: { options: colors.map(([k, c]) => ({ value: k, label: c.name })), mode: 'dropdown' } } },
-      // Buttons
+      { name: 'vehicle_model', selector: { select: { options: Object.entries(VEHICLE_MODELS).map(([k, v]) => ({ value: k, label: v })), mode: 'dropdown' as const } } },
+      { name: 'vehicle_variant', selector: { select: { options: Object.entries(VEHICLE_VARIANTS).map(([k, v]) => ({ value: k, label: v })), mode: 'dropdown' as const } } },
+      { name: 'paint_color', selector: { select: { options: colors.map(([k, c]) => ({ value: k, label: c.name })), mode: 'dropdown' as const } } },
+    ];
+  }
+
+  private _buttonsSchema() {
+    return [
       { type: 'grid' as const, schema: [
         { name: 'show_lock', selector: { boolean: {} } },
         { name: 'show_charge_port', selector: { boolean: {} } },
@@ -36,7 +38,11 @@ class TeslaCardEditor extends LitElement {
         { name: 'show_vent', selector: { boolean: {} } },
         { name: 'show_climate', selector: { boolean: {} } },
       ]},
-      // Entity overrides — 2 per row
+    ];
+  }
+
+  private _entitiesSchema() {
+    return [
       { type: 'grid' as const, schema: [
         { name: 'entity_battery_level', selector: { entity: { domain: 'sensor' } } },
         { name: 'entity_battery_range', selector: { entity: { domain: 'sensor' } } },
@@ -79,6 +85,7 @@ class TeslaCardEditor extends LitElement {
       ]},
       { type: 'grid' as const, schema: [
         { name: 'entity_odometer', selector: { entity: { domain: 'sensor' } } },
+        { name: 'entity_charge_current_max', selector: { entity: { domain: 'number' } } },
       ]},
     ];
   }
@@ -107,27 +114,33 @@ class TeslaCardEditor extends LitElement {
     entity_charge_limit: 'Charge Limit',
     entity_charger_power: 'Charger Power',
     entity_charge_rate: 'Charge Rate',
-    entity_charge_energy: 'Energy Added (kWh)',
-    entity_charger_voltage: 'Charger Voltage (V)',
-    entity_charger_current: 'Charger Current (A)',
+    entity_charge_energy: 'Energy Added',
+    entity_charger_voltage: 'Voltage',
+    entity_charger_current: 'Current',
     entity_time_to_full: 'Time to Full',
     entity_online: 'Online Status',
     entity_inside_temp: 'Inside Temp',
     entity_outside_temp: 'Outside Temp',
     entity_odometer: 'Odometer',
+    entity_charge_current_max: 'Charge Current Max',
   };
 
   render() {
     if (!this._config || !this.hass) return html``;
 
+    const label = (s: any) => this._labels[s.name] || s.name;
+
     return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${this._config}
-        .schema=${this._getSchema()}
-        .computeLabel=${(s: any) => this._labels[s.name] || s.name}
-        @value-changed=${this._formChanged}
-      ></ha-form>
+      <div class="editor">
+        <div class="section">Vehicle</div>
+        <ha-form .hass=${this.hass} .data=${this._config} .schema=${this._vehicleSchema()} .computeLabel=${label} @value-changed=${this._formChanged}></ha-form>
+
+        <div class="section">Buttons</div>
+        <ha-form class="compact" .hass=${this.hass} .data=${this._config} .schema=${this._buttonsSchema()} .computeLabel=${label} @value-changed=${this._formChanged}></ha-form>
+
+        <div class="section">Entities</div>
+        <ha-form .hass=${this.hass} .data=${this._config} .schema=${this._entitiesSchema()} .computeLabel=${label} @value-changed=${this._formChanged}></ha-form>
+      </div>
     `;
   }
 
@@ -145,12 +158,31 @@ class TeslaCardEditor extends LitElement {
   }
 
   private _formChanged(ev: CustomEvent) {
+    ev.stopPropagation();
     this._config = { ...this._config, ...ev.detail.value };
     this.dispatchEvent(new CustomEvent('config-changed', {
       detail: { config: this._config },
       bubbles: true,
       composed: true,
     }));
+  }
+
+  static get styles() {
+    return css`
+      :host { display: block; }
+      .editor { display: flex; flex-direction: column; gap: 8px; }
+      .section {
+        font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        color: var(--primary-color, #03a9f4);
+        margin-top: 12px; padding-bottom: 4px;
+        border-bottom: 1px solid var(--divider-color, #e0e0e0);
+      }
+      .section:first-child { margin-top: 0; }
+      .compact {
+        --ha-form-grid-row-gap: 0px;
+      }
+      ha-form { display: block; }
+    `;
   }
 }
 

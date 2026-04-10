@@ -36,7 +36,7 @@ export function buildEntityMap(config: TeslaCardConfig): TeslaEntityMap {
     flash_lights:           `button.${p}_flash_lights`,
     wake:                   `button.${p}_wake`,
     charge_limit:           config.entity_charge_limit     || `number.${p}_charge_state_charge_limit_soc`,
-    charge_current_number:  `number.${p}_charge_state_charge_current_request`,
+    charge_current_number:  config.entity_charge_current_max || `number.${p}_charge_state_charge_current_request`,
     location:               `device_tracker.${p}_location`,
     seat_heater_front_left: `select.${p}_climate_state_seat_heater_left`,
     seat_heater_front_right:`select.${p}_climate_state_seat_heater_right`,

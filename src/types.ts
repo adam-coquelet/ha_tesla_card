@@ -36,6 +36,7 @@ export interface TeslaCardConfig {
   entity_inside_temp?: string;
   entity_outside_temp?: string;
   entity_odometer?: string;
+  entity_charge_current_max?: string;
 }
 
 export type VehicleVariant = 'standard' | 'long_range' | 'performance';
