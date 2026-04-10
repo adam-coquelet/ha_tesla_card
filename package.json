@@ -1,13 +1,13 @@
 {
   "name": "ha-tesla-card",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "Tesla app-style Lovelace card for Home Assistant",
   "main": "dist/tesla-card.js",
   "type": "module",
   "scripts": {
     "build": "node scripts/encode-pictures.mjs && rollup -c rollup.config.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
-    "simulator": "npx serve . -p 5050 -s --no-clipboard",
+    "simulator": "npx serve .",
     "version": "node scripts/sync-version.mjs && npm run build",
     "release": "node scripts/release.mjs"
   },

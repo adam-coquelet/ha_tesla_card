@@ -89,8 +89,6 @@ class TeslaViewMain extends LitElement {
           ></tesla-vehicle-renderer>
         </div>
 
-        ${this._renderClimatePanel(s)}
-
         <div class="actions-zone">
           <div class="actions">
           ${this.config.show_lock !== false ? this._act(s.is_locked ? 'grey' : 'white', s.is_locked ? iconLock : iconUnlock, this._t('lock'), () => this._toggleLock()) : ''}
@@ -98,9 +96,10 @@ class TeslaViewMain extends LitElement {
           ${this.config.show_frunk !== false ? this._act(s.frunk_open ? 'white' : 'grey', iconFrunk, this._t('frunk'), () => this._openFrunk()) : ''}
           ${this.config.show_trunk !== false ? this._act(s.trunk_open ? 'white' : 'grey', iconTrunk, this._t('trunk'), () => this._toggleTrunk()) : ''}
           ${this.config.show_vent !== false ? this._act(s.windows_open ? 'white' : 'grey', iconVent, this._t('vent'), () => this._ventWindows()) : ''}
-          ${this.config.show_climate !== false ? this._act(s.is_climate_on ? 'white' : 'grey', iconClimate, this._t('climate'), () => this._toggleClimate()) : ''}
+          ${this.config.show_climate !== false ? html`<button class="act act-${s.is_climate_on ? 'white' : 'grey'}" id="btn-climate" @click=${() => this._toggleClimate()}>${iconClimate}<span class="act-label">${this._t('climate')}</span></button>` : ''}
           </div>
         </div>
+        ${this._renderClimatePanel(s)}
       </div>
     `;
   }
@@ -154,6 +153,19 @@ class TeslaViewMain extends LitElement {
         ${icon}
         <span class="act-label">${label}</span>
       </button>`;
+  }
+
+  updated() {
+    const btn = this.shadowRoot?.getElementById('btn-climate');
+    const panel = this.shadowRoot?.querySelector('.cl') as HTMLElement | null;
+    const root = this.shadowRoot?.querySelector('.root') as HTMLElement | null;
+    if (btn && panel && root && !panel.classList.contains('cl-hidden')) {
+      const btnRect = btn.getBoundingClientRect();
+      const rootRect = root.getBoundingClientRect();
+      const btnCenter = btnRect.left + btnRect.width / 2 - rootRect.left;
+      const panelWidth = panel.offsetWidth || 80;
+      panel.style.left = `${btnCenter - panelWidth / 2}px`;
+    }
   }
 
   private _renderClimatePanel(s: TeslaVehicleState) {
@@ -384,17 +396,21 @@ class TeslaViewMain extends LitElement {
          ════════════════════════════════ */
       .cl {
         position: absolute;
-        right: -6px;
-        top: -34px;
-        padding-top: 30px;
-        padding-bottom: 50px;
         bottom: 0;
-        display: flex;
-        align-items: center;
+        top: 0;
         z-index: 5;
         pointer-events: none;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        /* left is set dynamically by JS to center above the climate button */
+      }
+      .cl:after {
+        content: '';
+        position: absolute;
+        top: -30px; right: 0; bottom: 0; left: -58px;;
         background: linear-gradient(270deg, #1c1c1e, #1c1c1ecc 52%, #1c1c1e00);
-        padding-left: 58px;
+        z-index: -1;
       }
 
       .cl-hidden { display: none !important; }
@@ -418,7 +434,7 @@ class TeslaViewMain extends LitElement {
       }
 
       .cl-inner {
-        padding: 12px 16px 8px 20px;
+        padding: 12px 16px 56px 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
