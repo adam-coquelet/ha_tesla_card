@@ -93,12 +93,12 @@ class TeslaViewMain extends LitElement {
 
         <div class="actions-zone">
           <div class="actions">
-          ${this.config.show_lock !== false ? this._act(s.is_locked, iconLock, iconUnlock, this._t('lock'), () => this._toggleLock()) : ''}
-          ${this.config.show_charge_port !== false ? this._act(s.charger_door_open, iconChargePort, iconChargePort, this._t('charge'), () => this._toggleChargePort()) : ''}
-          ${this.config.show_frunk !== false ? this._act(s.frunk_open, iconFrunk, iconFrunk, this._t('frunk'), () => this._openFrunk()) : ''}
-          ${this.config.show_trunk !== false ? this._act(s.trunk_open, iconTrunk, iconTrunk, this._t('trunk'), () => this._toggleTrunk()) : ''}
-          ${this.config.show_vent !== false ? this._act(s.windows_open, iconVent, iconVent, this._t('vent'), () => this._ventWindows()) : ''}
-          ${this.config.show_climate !== false ? this._act(s.is_climate_on, iconClimate, iconClimate, this._t('climate'), () => this._toggleClimate()) : ''}
+          ${this.config.show_lock !== false ? this._act(s.is_locked ? 'grey' : 'white', s.is_locked ? iconLock : iconUnlock, this._t('lock'), () => this._toggleLock()) : ''}
+          ${this.config.show_charge_port !== false ? this._act(s.is_charging ? 'green' : s.charger_door_open ? 'white' : 'grey', iconChargePort, this._t('charge'), () => this._toggleChargePort()) : ''}
+          ${this.config.show_frunk !== false ? this._act(s.frunk_open ? 'white' : 'grey', iconFrunk, this._t('frunk'), () => this._openFrunk()) : ''}
+          ${this.config.show_trunk !== false ? this._act(s.trunk_open ? 'white' : 'grey', iconTrunk, this._t('trunk'), () => this._toggleTrunk()) : ''}
+          ${this.config.show_vent !== false ? this._act(s.windows_open ? 'white' : 'grey', iconVent, this._t('vent'), () => this._ventWindows()) : ''}
+          ${this.config.show_climate !== false ? this._act(s.is_climate_on ? 'white' : 'grey', iconClimate, this._t('climate'), () => this._toggleClimate()) : ''}
           </div>
         </div>
       </div>
@@ -148,10 +148,10 @@ class TeslaViewMain extends LitElement {
     `;
   }
 
-  private _act(active: boolean, iconOn: any, iconOff: any, label: string, fn: () => void) {
+  private _act(state: 'grey' | 'white' | 'green', icon: any, label: string, fn: () => void) {
     return html`
-      <button class="act ${active ? 'on' : ''}" @click=${fn}>
-        ${active ? iconOn : iconOff}
+      <button class="act act-${state}" @click=${fn}>
+        ${icon}
         <span class="act-label">${label}</span>
       </button>`;
   }
@@ -362,7 +362,9 @@ class TeslaViewMain extends LitElement {
 
       .act:active { transform: scale(0.88); }
 
-      .act.on { color: #30D158; }
+      .act-grey { color: rgba(255,255,255,0.30); }
+      .act-white { color: rgba(255,255,255,0.85); }
+      .act-green { color: #30D158; }
 
       .act svg {
         width: 24px;
@@ -382,7 +384,7 @@ class TeslaViewMain extends LitElement {
          ════════════════════════════════ */
       .cl {
         position: absolute;
-        right: -3px;
+        right: -2px;
         top: 0;
         bottom: 50px;
         display: flex;
