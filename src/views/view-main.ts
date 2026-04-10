@@ -2,6 +2,42 @@ import { LitElement, html, css } from 'lit';
 import { TeslaVehicleState, TeslaCardConfig, Hass, TeslaEntityMap } from '../types';
 import '../vehicle/vehicle-renderer';
 
+const i18n: Record<string, Record<string, string>> = {
+  en: {
+    lock: 'Lock',
+    charge: 'Charge',
+    frunk: 'Frunk',
+    vent: 'Vent',
+    climate: 'Climate',
+    hr: 'hr',
+    min: 'min',
+    remaining: 'remaining',
+    calculating: 'Calculating...',
+    charge_limit: 'Charge Limit',
+    int: 'in',
+    ext: 'out',
+  },
+  fr: {
+    lock: 'Verrouiller',
+    charge: 'Recharge',
+    frunk: 'Frunk',
+    vent: 'Aérer',
+    climate: 'Ventiler',
+    hr: 'h',
+    min: 'min',
+    remaining: 'restantes',
+    calculating: 'Calcul...',
+    charge_limit: 'Limite de charge',
+    int: 'int',
+    ext: 'ext',
+  },
+};
+
+function t(lang: string, key: string): string {
+  const l = lang?.startsWith('fr') ? 'fr' : 'en';
+  return i18n[l]?.[key] ?? i18n['en'][key] ?? key;
+}
+
 class TeslaViewMain extends LitElement {
   static get properties() {
     return {
@@ -55,11 +91,11 @@ class TeslaViewMain extends LitElement {
 
         <div class="actions-zone">
           <div class="actions">
-          ${this._act(s.is_locked, iconLock, iconUnlock, 'Verrouiller', () => this._toggleLock())}
-          ${this._act(s.charger_door_open, iconChargePort, iconChargePort, 'Recharge', () => this._toggleChargePort())}
-          ${this._act(s.frunk_open, iconFrunk, iconFrunk, 'Frunk', () => this._openFrunk())}
-          ${this._act(s.windows_open, iconVent, iconVent, 'Aérer', () => this._ventWindows())}
-          ${this._act(s.is_climate_on, iconClimate, iconClimate, 'Ventiler', () => this._toggleClimate())}
+          ${this._act(s.is_locked, iconLock, iconUnlock, this._t('lock'), () => this._toggleLock())}
+          ${this._act(s.charger_door_open, iconChargePort, iconChargePort, this._t('charge'), () => this._toggleChargePort())}
+          ${this._act(s.frunk_open, iconFrunk, iconFrunk, this._t('frunk'), () => this._openFrunk())}
+          ${this._act(s.windows_open, iconVent, iconVent, this._t('vent'), () => this._ventWindows())}
+          ${this._act(s.is_climate_on, iconClimate, iconClimate, this._t('climate'), () => this._toggleClimate())}
           </div>
         </div>
       </div>
@@ -80,11 +116,12 @@ class TeslaViewMain extends LitElement {
     if (t !== null && t > 0) {
       const h = Math.floor(t);
       const m = Math.round((t - h) * 60);
-      if (h > 0 && m > 0) timeStr = `${h} hr ${m} min remaining`;
-      else if (h > 0) timeStr = `${h} hr remaining`;
-      else timeStr = `${m} min remaining`;
+      const hr = this._t('hr'), mn = this._t('min'), rem = this._t('remaining');
+      if (h > 0 && m > 0) timeStr = `${h} ${hr} ${m} ${mn} ${rem}`;
+      else if (h > 0) timeStr = `${h} ${hr} ${rem}`;
+      else timeStr = `${m} ${mn} ${rem}`;
     } else {
-      timeStr = 'Calculating...';
+      timeStr = this._t('calculating');
     }
     const ru = s.range_unit === 'mi' ? 'mi/hr' : 'km/hr';
 
@@ -97,7 +134,7 @@ class TeslaViewMain extends LitElement {
           </svg>
         </div>
         <div class="cp-time">${timeStr}</div>
-        <div class="cp-limit">Charge Limit: ${s.charge_limit ?? 80}%</div>
+        <div class="cp-limit">${this._t('charge_limit')}: ${s.charge_limit ?? 80}%</div>
         <div class="cp-sep"></div>
         <div class="cp-stat">${s.charging_power ?? '--'} kW</div>
         <div class="cp-stat">${s.charge_rate !== null ? Math.round(s.charge_rate) : '--'} ${ru}</div>
@@ -151,12 +188,14 @@ class TeslaViewMain extends LitElement {
           <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M8.12 9.29L12 13.17l3.88-3.88a.996.996 0 1 1 1.41 1.41l-4.59 4.59a.996.996 0 0 1-1.41 0L6.7 10.7a.996.996 0 0 1 0-1.41c.39-.38 1.03-.39 1.42 0"/></svg>
         </button>
         <div class="cl-temps">
-          ${inside !== null ? html`<span>${inside}° int</span>` : ''}
-          ${outside !== null ? html`<span>${outside}° ext</span>` : ''}
+          ${inside !== null ? html`<span>${inside}° ${this._t('int')}</span>` : ''}
+          ${outside !== null ? html`<span>${outside}° ${this._t('ext')}</span>` : ''}
         </div>
       </div>
     `;
   }
+
+  private _t(key: string): string { return t(this.hass?.language || 'en', key); }
 
   private _toggleLock() { this.hass?.callService('lock', this.vehicleState.is_locked ? 'unlock' : 'lock', { entity_id: this.entityMap.door_lock }); }
   private _toggleClimate() { this.hass?.callService('climate', this.vehicleState.is_climate_on ? 'turn_off' : 'turn_on', { entity_id: this.entityMap.climate }); }
