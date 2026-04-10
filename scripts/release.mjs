@@ -6,23 +6,27 @@ const run = (cmd) => {
   execSync(cmd, { stdio: 'inherit' });
 };
 
-// 1. Bump patch version (triggers "version" script → sync + build)
+// 1. Bump patch version
 run('npm version patch --no-git-tag-version');
 
-// 2. Read new version
+// 2. Sync version + build
+run('node scripts/sync-version.mjs');
+run('npm run build');
+
+// 3. Read new version
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
 const v = pkg.version;
 const tag = `v${v}`;
 
 console.log(`\nReleasing ${tag}...\n`);
 
-// 3. Stage, commit, push
+// 4. Stage, commit, push
 run('git add -A');
 run(`git commit -m "${tag}"`);
 run('git push origin main');
 
-// 4. Tag and push tag (triggers GitHub Actions release workflow)
+// 5. Tag and push (triggers GitHub Actions release)
 run(`git tag -a ${tag} -m "${tag}"`);
 run(`git push origin ${tag}`);
 
-console.log(`\n✓ ${tag} released. GitHub Actions will create the release.`);
+console.log(`\n✓ ${tag} released.`);
