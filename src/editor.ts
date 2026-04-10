@@ -3,7 +3,7 @@ import { TeslaCardConfig, Hass } from './types';
 import { VEHICLE_MODELS, VEHICLE_VARIANTS, PAINT_COLORS, DEFAULT_CONFIG } from './const';
 import { getAvailableColors } from './vehicle/image-map';
 
-const ENTITY_FIELDS: { key: string; label: string; domain?: string }[] = [
+const ENTITY_FIELDS: { key: string; label: string; domain: string }[] = [
   { key: 'entity_battery_level',  label: 'Battery Level',    domain: 'sensor' },
   { key: 'entity_battery_range',  label: 'Battery Range',    domain: 'sensor' },
   { key: 'entity_lock',           label: 'Door Lock',        domain: 'lock' },
@@ -17,9 +17,6 @@ const ENTITY_FIELDS: { key: string; label: string; domain?: string }[] = [
   { key: 'entity_charge_limit',   label: 'Charge Limit',     domain: 'number' },
   { key: 'entity_charger_power',  label: 'Charger Power',    domain: 'sensor' },
   { key: 'entity_charge_rate',    label: 'Charge Rate',      domain: 'sensor' },
-  { key: 'entity_charge_energy',  label: 'Energy Added',     domain: 'sensor' },
-  { key: 'entity_charger_voltage',label: 'Charger Voltage',  domain: 'sensor' },
-  { key: 'entity_charger_current',label: 'Charger Current',  domain: 'sensor' },
   { key: 'entity_time_to_full',   label: 'Time to Full',     domain: 'sensor' },
   { key: 'entity_online',         label: 'Online Status',    domain: 'binary_sensor' },
   { key: 'entity_inside_temp',    label: 'Inside Temp',      domain: 'sensor' },
@@ -27,17 +24,19 @@ const ENTITY_FIELDS: { key: string; label: string; domain?: string }[] = [
   { key: 'entity_odometer',       label: 'Odometer',         domain: 'sensor' },
 ];
 
-// Ensure HA custom elements are loaded
-const loadHaComponents = async () => {
-  if (customElements.get('ha-entity-picker')) return;
+// Force HA to load its custom elements
+const loadComponents = async () => {
+  await customElements.whenDefined('partial-panel-resolver');
+  const ppr = document.createElement('partial-panel-resolver') as any;
+  ppr.hass = { panels: [{ url_path: 'tmp', component_name: 'lovelace' }] };
+  ppr._updateRoutes();
+  await ppr.routerOptions.routes.tmp.load?.();
   const helpers = await (window as any).loadCardHelpers?.();
-  if (helpers) {
-    // Creating a temporary entity-card forces HA to load its components
-    const el = await helpers.createCardElement({ type: 'entities', entities: [] });
-    if (el) el.hass = (document.querySelector('home-assistant') as any)?.hass;
-  }
+  if (!helpers) return;
+  const el = await helpers.createCardElement({ type: 'entity', entity: 'sun.sun' });
+  if (el) await el.constructor.getConfigElement?.();
 };
-loadHaComponents();
+loadComponents().catch(() => {});
 
 class TeslaCardEditor extends LitElement {
   static get properties() {
@@ -57,81 +56,63 @@ class TeslaCardEditor extends LitElement {
   render() {
     if (!this._config || !this.hass) return html``;
 
+    const schema = [
+      { name: 'entity_prefix', label: 'Entity Prefix', selector: { text: {} } },
+      {
+        type: 'grid' as const,
+        schema: [
+          { name: 'vehicle_model', label: 'Model', selector: { select: { options: Object.entries(VEHICLE_MODELS).map(([k, v]) => ({ value: k, label: v })) } } },
+          { name: 'vehicle_variant', label: 'Variant', selector: { select: { options: Object.entries(VEHICLE_VARIANTS).map(([k, v]) => ({ value: k, label: v })) } } },
+        ],
+      },
+      { name: 'paint_color', label: 'Paint Color', selector: { select: { options: this._getColors().map(([k, c]) => ({ value: k, label: c.name })) } } },
+    ];
+
     return html`
       <div class="editor">
-        <!-- Vehicle -->
-        <div class="section">Vehicle</div>
+        <ha-form
+          .hass=${this.hass}
+          .data=${this._config}
+          .schema=${schema}
+          .computeLabel=${(s: any) => s.label || s.name}
+          @value-changed=${this._formChanged}
+        ></ha-form>
 
-        <ha-textfield
-          label="Entity Prefix"
-          .value=${this._config.entity_prefix || ''}
-          .configValue=${'entity_prefix'}
-          @input=${this._valueChanged}
-          helper="Prefix of your Tesla Fleet entities"
-        ></ha-textfield>
-
-        <div class="row">
-          <ha-select
-            label="Model"
-            .value=${this._config.vehicle_model}
-            .configValue=${'vehicle_model'}
-            @selected=${this._valueChanged}
-            @closed=${(e: Event) => e.stopPropagation()}
-          >
-            ${Object.entries(VEHICLE_MODELS).map(([k, v]) =>
-              html`<mwc-list-item .value=${k}>${v}</mwc-list-item>`
-            )}
-          </ha-select>
-          <ha-select
-            label="Variant"
-            .value=${this._config.vehicle_variant || 'standard'}
-            .configValue=${'vehicle_variant'}
-            @selected=${this._valueChanged}
-            @closed=${(e: Event) => e.stopPropagation()}
-          >
-            ${Object.entries(VEHICLE_VARIANTS).map(([k, v]) =>
-              html`<mwc-list-item .value=${k}>${v}</mwc-list-item>`
-            )}
-          </ha-select>
-        </div>
-
-        <ha-select
-          label="Paint Color"
-          .value=${this._config.paint_color}
-          .configValue=${'paint_color'}
-          @selected=${this._valueChanged}
-          @closed=${(e: Event) => e.stopPropagation()}
-        >
-          ${this._getColors().map(([k, c]) =>
-            html`<mwc-list-item .value=${k}>${c.name}</mwc-list-item>`
-          )}
-        </ha-select>
-
-        <!-- Buttons -->
         <div class="section">Action Buttons</div>
+        ${this._switch('show_lock', 'Lock / Unlock')}
+        ${this._switch('show_charge_port', 'Charge Port')}
+        ${this._switch('show_frunk', 'Frunk')}
+        ${this._switch('show_trunk', 'Trunk')}
+        ${this._switch('show_vent', 'Vent Windows')}
+        ${this._switch('show_climate', 'Climate')}
 
-        ${this._toggle('show_lock', 'Lock / Unlock')}
-        ${this._toggle('show_charge_port', 'Charge Port')}
-        ${this._toggle('show_frunk', 'Frunk')}
-        ${this._toggle('show_trunk', 'Trunk')}
-        ${this._toggle('show_vent', 'Vent Windows')}
-        ${this._toggle('show_climate', 'Climate')}
-
-        <!-- Entity overrides -->
-        <div class="section">Entities (optional — auto-detected from prefix)</div>
-
+        <div class="section">Entities</div>
+        <p class="hint">Leave empty to auto-detect from prefix.</p>
         ${ENTITY_FIELDS.map(f => html`
           <ha-entity-picker
-            label="${f.label}"
+            .label=${f.label}
             .hass=${this.hass}
             .value=${(this._config as any)[f.key] || ''}
+            .includeDomains=${[f.domain]}
             .configValue=${f.key}
-            .includeDomains=${f.domain ? [f.domain] : undefined}
-            @value-changed=${this._valueChanged}
+            @value-changed=${this._pickerChanged}
             allow-custom-entity
           ></ha-entity-picker>
         `)}
       </div>
+    `;
+  }
+
+  private _switch(key: string, label: string) {
+    const checked = (this._config as any)[key] !== false;
+    return html`
+      <ha-formfield .label=${label}>
+        <ha-switch
+          .checked=${checked}
+          .configValue=${key}
+          @change=${this._switchChanged}
+        ></ha-switch>
+      </ha-formfield>
     `;
   }
 
@@ -148,42 +129,32 @@ class TeslaCardEditor extends LitElement {
       .map(k => [k, PAINT_COLORS[k]] as [string, { name: string; hex: string }]);
   }
 
-  private _toggle(key: string, label: string) {
-    const checked = (this._config as any)[key] !== false;
-    return html`
-      <ha-formfield .label=${label}>
-        <ha-switch
-          .checked=${checked}
-          .configValue=${key}
-          @change=${this._valueChanged}
-        ></ha-switch>
-      </ha-formfield>
-    `;
+  private _formChanged(ev: CustomEvent) {
+    this._config = { ...this._config, ...ev.detail.value };
+    this._fire();
   }
 
-  private _valueChanged(ev: any) {
-    if (!this._config) return;
-    const target = ev.target;
+  private _switchChanged(ev: Event) {
+    const target = ev.target as any;
+    this._config = { ...this._config, [target.configValue]: target.checked };
+    this._fire();
+  }
+
+  private _pickerChanged(ev: CustomEvent) {
+    const target = ev.target as any;
     const key = target.configValue;
-    if (!key) return;
-
-    let value;
-    if (target.tagName === 'HA-SWITCH') {
-      value = target.checked;
-    } else if (ev.detail && ev.detail.value !== undefined) {
-      value = ev.detail.value;
-    } else if (target.value !== undefined) {
-      value = target.value;
-    }
-
-    if (value === '' || value === undefined) {
-      const newConfig = { ...this._config };
-      delete (newConfig as any)[key];
-      this._config = newConfig;
+    const val = ev.detail.value;
+    if (!val) {
+      const c = { ...this._config };
+      delete (c as any)[key];
+      this._config = c;
     } else {
-      this._config = { ...this._config, [key]: value };
+      this._config = { ...this._config, [key]: val };
     }
+    this._fire();
+  }
 
+  private _fire() {
     this.dispatchEvent(new CustomEvent('config-changed', {
       detail: { config: this._config },
       bubbles: true,
@@ -194,19 +165,16 @@ class TeslaCardEditor extends LitElement {
   static get styles() {
     return css`
       :host { display: block; }
-      .editor { display: flex; flex-direction: column; gap: 16px; padding: 8px 0; }
+      .editor { display: flex; flex-direction: column; gap: 12px; padding: 8px 0; }
       .section {
-        font-size: 14px; font-weight: 500;
-        color: var(--primary-color);
-        margin-top: 8px;
-        border-bottom: 1px solid var(--divider-color);
-        padding-bottom: 4px;
+        font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        color: var(--primary-color, #03a9f4);
+        margin-top: 12px; padding-bottom: 4px;
+        border-bottom: 1px solid var(--divider-color, #e0e0e0);
       }
-      .row { display: flex; gap: 12px; }
-      .row > * { flex: 1; }
+      .hint { font-size: 12px; color: var(--secondary-text-color); margin: -4px 0 4px; }
       ha-formfield { display: flex; justify-content: space-between; padding: 4px 0; }
-      ha-entity-picker { width: 100%; }
-      ha-textfield, ha-select { width: 100%; }
+      ha-entity-picker { display: block; margin-bottom: 4px; }
     `;
   }
 }
