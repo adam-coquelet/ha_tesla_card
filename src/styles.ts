@@ -17,7 +17,7 @@ export const cardStyles = css`
   }
 
   ha-card {
-    background: var(--tesla-bg);
+    background: #111111 !important;
     border-radius: 20px;
     overflow: hidden;
     color: var(--tesla-text);

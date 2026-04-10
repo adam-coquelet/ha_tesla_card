@@ -1,6 +1,6 @@
 import { PaintColor } from './types';
 
-export const CARD_VERSION = '1.0.4';
+export const CARD_VERSION = '1.0.5';
 
 export const PAINT_COLORS: Record<string, PaintColor> = {
   pearl_white:       { name: 'Pearl White Multi-Coat',   hex: '#ECF0F1', metallic: true },

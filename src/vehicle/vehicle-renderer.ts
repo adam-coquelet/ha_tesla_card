@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { TeslaVehicleState, TeslaCardConfig } from '../types';
 import { PAINT_COLORS } from '../const';
 import { getVehicleImageFile } from './image-map';
+import { PICTURES } from './pictures-data';
 
 function hexToRgb(hex: string): string {
   const n = parseInt(hex.replace('#', ''), 16);
@@ -92,8 +93,8 @@ class TeslaVehicleRenderer extends LitElement {
     );
     if (!imageFile) return html`<div class="no-image">No vehicle image available</div>`;
 
-    const basePath = cfg.image_path || '/hacsfiles/ha_tesla_card/pictures';
-    const imgUrl = `${basePath}/${imageFile}`;
+    // Use embedded base64 image, fallback to URL path
+    const imgUrl = PICTURES[imageFile] || `${cfg.image_path || '/hacsfiles/ha_tesla_card/pictures'}/${imageFile}`;
     const s = this.state;
     const imgClass = (s && !s.is_online) ? 'offline' : '';
 
