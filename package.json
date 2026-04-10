@@ -5,10 +5,11 @@
   "main": "dist/tesla-card.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c rollup.config.mjs",
+    "build": "rollup -c rollup.config.mjs && node scripts/copy-pictures.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
     "simulator": "npx serve . -p 5050 -s --no-clipboard",
-    "version": "node scripts/sync-version.mjs && npm run build"
+    "version": "node scripts/sync-version.mjs && npm run build",
+    "release": "node scripts/release.mjs"
   },
   "devDependencies": {
     "lit": "^3.2.0",

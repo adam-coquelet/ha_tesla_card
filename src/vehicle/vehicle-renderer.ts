@@ -92,7 +92,7 @@ class TeslaVehicleRenderer extends LitElement {
     );
     if (!imageFile) return html`<div class="no-image">No vehicle image available</div>`;
 
-    const basePath = cfg.image_path || '/local/community/ha-tesla-card/pictures';
+    const basePath = cfg.image_path || '/hacsfiles/ha_tesla_card/pictures';
     const imgUrl = `${basePath}/${imageFile}`;
     const s = this.state;
     const imgClass = (s && !s.is_online) ? 'offline' : '';
