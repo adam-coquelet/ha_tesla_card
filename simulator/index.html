@@ -463,43 +463,56 @@
 
       const s = { ...defaults, ...overrides };
 
+      // Real Tesla Fleet entity IDs from HA core
+      const P = PREFIX;
       return {
-        [`sensor.${PREFIX}_battery_level`]:         { state: String(s.battery), attributes: { unit_of_measurement: '%', device_class: 'battery' }, entity_id: `sensor.${PREFIX}_battery_level` },
-        [`sensor.${PREFIX}_battery_range`]:          { state: String(s.range), attributes: { unit_of_measurement: 'km' }, entity_id: `sensor.${PREFIX}_battery_range` },
-        [`lock.${PREFIX}_door_lock`]:                { state: s.locked ? 'locked' : 'unlocked', attributes: {}, entity_id: `lock.${PREFIX}_door_lock` },
-        [`lock.${PREFIX}_charge_cable_lock`]:        { state: 'locked', attributes: {}, entity_id: `lock.${PREFIX}_charge_cable_lock` },
-        [`binary_sensor.${PREFIX}_online`]:          { state: s.online ? 'on' : 'off', attributes: {}, entity_id: `binary_sensor.${PREFIX}_online` },
-        [`binary_sensor.${PREFIX}_charging`]:        { state: s.charging ? 'on' : 'off', attributes: {}, entity_id: `binary_sensor.${PREFIX}_charging` },
-        [`binary_sensor.${PREFIX}_user_present`]:    { state: 'off', attributes: {}, entity_id: `binary_sensor.${PREFIX}_user_present` },
-        [`climate.${PREFIX}_climate`]:               { state: s.climateOn ? 'heat_cool' : 'off', attributes: { temperature: s.targetTemp, current_temperature: s.insideTemp, min_temp: 15, max_temp: 30 }, entity_id: `climate.${PREFIX}_climate` },
-        [`switch.${PREFIX}_charging`]:               { state: s.charging ? 'on' : 'off', attributes: {}, entity_id: `switch.${PREFIX}_charging` },
-        [`switch.${PREFIX}_sentry_mode`]:            { state: s.sentry ? 'on' : 'off', attributes: {}, entity_id: `switch.${PREFIX}_sentry_mode` },
-        [`switch.${PREFIX}_defrost`]:                { state: s.defrost ? 'on' : 'off', attributes: {}, entity_id: `switch.${PREFIX}_defrost` },
-        [`switch.${PREFIX}_steering_wheel_heater`]:  { state: 'off', attributes: {}, entity_id: `switch.${PREFIX}_steering_wheel_heater` },
-        [`cover.${PREFIX}_frunk`]:                   { state: s.frunk ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_frunk` },
-        [`cover.${PREFIX}_trunk`]:                   { state: s.trunk ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_trunk` },
-        [`cover.${PREFIX}_charger_door`]:            { state: s.chargePort ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_charger_door` },
-        [`cover.${PREFIX}_windows`]:                 { state: s.windows ? 'open' : 'closed', attributes: {}, entity_id: `cover.${PREFIX}_windows` },
-        [`sensor.${PREFIX}_inside_temperature`]:     { state: String(s.insideTemp), attributes: { unit_of_measurement: '°C' }, entity_id: `sensor.${PREFIX}_inside_temperature` },
-        [`sensor.${PREFIX}_outside_temperature`]:    { state: String(s.outsideTemp), attributes: { unit_of_measurement: '°C' }, entity_id: `sensor.${PREFIX}_outside_temperature` },
-        [`sensor.${PREFIX}_odometer`]:               { state: String(s.odometer), attributes: { unit_of_measurement: 'km' }, entity_id: `sensor.${PREFIX}_odometer` },
-        [`sensor.${PREFIX}_charging_power`]:         { state: s.charging ? String(s.chargePower) : '0', attributes: { unit_of_measurement: 'kW' }, entity_id: `sensor.${PREFIX}_charging_power` },
-        [`sensor.${PREFIX}_charge_rate`]:            { state: s.charging ? String(Math.round(s.chargePower * 3.5)) : '0', attributes: { unit_of_measurement: 'km/h' }, entity_id: `sensor.${PREFIX}_charge_rate` },
-        [`sensor.${PREFIX}_charge_energy_added`]:    { state: s.charging ? '12.4' : '0', attributes: { unit_of_measurement: 'kWh' }, entity_id: `sensor.${PREFIX}_charge_energy_added` },
-        [`sensor.${PREFIX}_charger_voltage`]:        { state: s.charging ? '240' : '0', attributes: { unit_of_measurement: 'V' }, entity_id: `sensor.${PREFIX}_charger_voltage` },
-        [`sensor.${PREFIX}_charger_current`]:        { state: s.charging ? '32' : '0', attributes: { unit_of_measurement: 'A' }, entity_id: `sensor.${PREFIX}_charger_current` },
-        [`sensor.${PREFIX}_time_to_full_charge`]:    { state: s.charging ? '1.5' : '0', attributes: { unit_of_measurement: 'h' }, entity_id: `sensor.${PREFIX}_time_to_full_charge` },
-        [`number.${PREFIX}_charge_limit`]:           { state: String(s.chargeLimit), attributes: { min: 50, max: 100, step: 1 }, entity_id: `number.${PREFIX}_charge_limit` },
-        [`number.${PREFIX}_charging_amps`]:          { state: '32', attributes: { min: 0, max: 48 }, entity_id: `number.${PREFIX}_charging_amps` },
-        [`button.${PREFIX}_honk_horn`]:              { state: 'unknown', attributes: {}, entity_id: `button.${PREFIX}_honk_horn` },
-        [`button.${PREFIX}_flash_lights`]:           { state: 'unknown', attributes: {}, entity_id: `button.${PREFIX}_flash_lights` },
-        [`button.${PREFIX}_wake`]:                   { state: 'unknown', attributes: {}, entity_id: `button.${PREFIX}_wake` },
-        [`device_tracker.${PREFIX}_location`]:       { state: 'not_home', attributes: { latitude: 48.8566, longitude: 2.3522 }, entity_id: `device_tracker.${PREFIX}_location` },
-        [`select.${PREFIX}_seat_heater_front_left`]: { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_front_left` },
-        [`select.${PREFIX}_seat_heater_front_right`]:{ state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_front_right` },
-        [`select.${PREFIX}_seat_heater_rear_left`]:  { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_rear_left` },
-        [`select.${PREFIX}_seat_heater_rear_right`]: { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${PREFIX}_seat_heater_rear_right` },
-        [`update.${PREFIX}_firmware`]:               { state: 'off', attributes: { installed_version: '2024.38.1', latest_version: '2024.38.1' }, entity_id: `update.${PREFIX}_firmware` },
+        // climate
+        [`climate.${P}_driver_temp`]:                                  { state: s.climateOn ? 'heat_cool' : 'off', attributes: { temperature: s.targetTemp, current_temperature: s.insideTemp, min_temp: 15, max_temp: 30 }, entity_id: `climate.${P}_driver_temp` },
+        // lock
+        [`lock.${P}_vehicle_state_locked`]:                            { state: s.locked ? 'locked' : 'unlocked', attributes: {}, entity_id: `lock.${P}_vehicle_state_locked` },
+        [`lock.${P}_charge_state_charge_port_latch`]:                  { state: 'locked', attributes: {}, entity_id: `lock.${P}_charge_state_charge_port_latch` },
+        // cover
+        [`cover.${P}_vehicle_state_ft`]:                               { state: s.frunk ? 'open' : 'closed', attributes: {}, entity_id: `cover.${P}_vehicle_state_ft` },
+        [`cover.${P}_vehicle_state_rt`]:                               { state: s.trunk ? 'open' : 'closed', attributes: {}, entity_id: `cover.${P}_vehicle_state_rt` },
+        [`cover.${P}_charge_state_charge_port_door_open`]:             { state: s.chargePort ? 'open' : 'closed', attributes: {}, entity_id: `cover.${P}_charge_state_charge_port_door_open` },
+        [`cover.${P}_windows`]:                                        { state: s.windows ? 'open' : 'closed', attributes: {}, entity_id: `cover.${P}_windows` },
+        // switch
+        [`switch.${P}_charge_state_charging_state`]:                   { state: s.charging ? 'on' : 'off', attributes: {}, entity_id: `switch.${P}_charge_state_charging_state` },
+        [`switch.${P}_vehicle_state_sentry_mode`]:                     { state: s.sentry ? 'on' : 'off', attributes: {}, entity_id: `switch.${P}_vehicle_state_sentry_mode` },
+        [`switch.${P}_climate_state_defrost_mode`]:                    { state: s.defrost ? 'on' : 'off', attributes: {}, entity_id: `switch.${P}_climate_state_defrost_mode` },
+        [`switch.${P}_climate_state_auto_steering_wheel_heat`]:        { state: 'off', attributes: {}, entity_id: `switch.${P}_climate_state_auto_steering_wheel_heat` },
+        // sensor
+        [`sensor.${P}_charge_state_battery_level`]:                    { state: String(s.battery), attributes: { unit_of_measurement: '%' }, entity_id: `sensor.${P}_charge_state_battery_level` },
+        [`sensor.${P}_charge_state_battery_range`]:                    { state: String(s.range), attributes: { unit_of_measurement: 'km' }, entity_id: `sensor.${P}_charge_state_battery_range` },
+        [`sensor.${P}_climate_state_inside_temp`]:                     { state: String(s.insideTemp), attributes: { unit_of_measurement: '°C' }, entity_id: `sensor.${P}_climate_state_inside_temp` },
+        [`sensor.${P}_climate_state_outside_temp`]:                    { state: String(s.outsideTemp), attributes: { unit_of_measurement: '°C' }, entity_id: `sensor.${P}_climate_state_outside_temp` },
+        [`sensor.${P}_vehicle_state_odometer`]:                        { state: String(s.odometer), attributes: { unit_of_measurement: 'km' }, entity_id: `sensor.${P}_vehicle_state_odometer` },
+        [`sensor.${P}_charge_state_charger_power`]:                    { state: s.charging ? String(s.chargePower) : '0', attributes: { unit_of_measurement: 'kW' }, entity_id: `sensor.${P}_charge_state_charger_power` },
+        [`sensor.${P}_charge_state_charge_rate`]:                      { state: s.charging ? String(Math.round(s.chargePower * 3.5)) : '0', attributes: { unit_of_measurement: 'km/h' }, entity_id: `sensor.${P}_charge_state_charge_rate` },
+        [`sensor.${P}_charge_state_charge_energy_added`]:              { state: s.charging ? '12.4' : '0', attributes: { unit_of_measurement: 'kWh' }, entity_id: `sensor.${P}_charge_state_charge_energy_added` },
+        [`sensor.${P}_charge_state_charger_voltage`]:                  { state: s.charging ? '240' : '0', attributes: { unit_of_measurement: 'V' }, entity_id: `sensor.${P}_charge_state_charger_voltage` },
+        [`sensor.${P}_charge_state_charger_actual_current`]:           { state: s.charging ? '32' : '0', attributes: { unit_of_measurement: 'A' }, entity_id: `sensor.${P}_charge_state_charger_actual_current` },
+        [`sensor.${P}_charge_state_minutes_to_full_charge`]:           { state: s.charging ? '90' : '0', attributes: { unit_of_measurement: 'min' }, entity_id: `sensor.${P}_charge_state_minutes_to_full_charge` },
+        // binary_sensor
+        [`binary_sensor.${P}_charge_state_conn_charge_cable`]:         { state: s.charging ? 'on' : 'off', attributes: {}, entity_id: `binary_sensor.${P}_charge_state_conn_charge_cable` },
+        [`binary_sensor.${P}_state`]:                                  { state: s.online ? 'online' : 'offline', attributes: {}, entity_id: `binary_sensor.${P}_state` },
+        [`binary_sensor.${P}_vehicle_state_is_user_present`]:          { state: 'off', attributes: {}, entity_id: `binary_sensor.${P}_vehicle_state_is_user_present` },
+        // button
+        [`button.${P}_honk`]:                                          { state: 'unknown', attributes: {}, entity_id: `button.${P}_honk` },
+        [`button.${P}_flash_lights`]:                                  { state: 'unknown', attributes: {}, entity_id: `button.${P}_flash_lights` },
+        [`button.${P}_wake`]:                                          { state: 'unknown', attributes: {}, entity_id: `button.${P}_wake` },
+        // number
+        [`number.${P}_charge_state_charge_limit_soc`]:                 { state: String(s.chargeLimit), attributes: { min: 50, max: 100, step: 1 }, entity_id: `number.${P}_charge_state_charge_limit_soc` },
+        [`number.${P}_charge_state_charge_current_request`]:           { state: '32', attributes: { min: 0, max: 48 }, entity_id: `number.${P}_charge_state_charge_current_request` },
+        // device_tracker
+        [`device_tracker.${P}_location`]:                              { state: 'not_home', attributes: { latitude: 48.8566, longitude: 2.3522 }, entity_id: `device_tracker.${P}_location` },
+        // select
+        [`select.${P}_climate_state_seat_heater_left`]:                { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${P}_climate_state_seat_heater_left` },
+        [`select.${P}_climate_state_seat_heater_right`]:               { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${P}_climate_state_seat_heater_right` },
+        [`select.${P}_climate_state_seat_heater_rear_left`]:           { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${P}_climate_state_seat_heater_rear_left` },
+        [`select.${P}_climate_state_seat_heater_rear_right`]:          { state: 'Off', attributes: { options: ['Off', 'Low', 'Medium', 'High'] }, entity_id: `select.${P}_climate_state_seat_heater_rear_right` },
+        // update
+        [`update.${P}_vehicle_state_software_update_status`]:          { state: 'off', attributes: { installed_version: '2024.38.1', latest_version: '2024.38.1' }, entity_id: `update.${P}_vehicle_state_software_update_status` },
       };
     }
 

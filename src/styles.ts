@@ -72,6 +72,6 @@ export const cardStyles = css`
   /* ── VIEW CONTENT ───────────────────────────────────────── */
   .view-content {
     flex: 1;
-    padding: 0 0 16px;
+    padding: 0 0 12px;
   }
 `;

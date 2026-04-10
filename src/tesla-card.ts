@@ -4,6 +4,7 @@ import { CARD_VERSION, DEFAULT_CONFIG } from './const';
 import { buildEntityMap, extractVehicleState } from './entity-mapping';
 import { cardStyles } from './styles';
 import './views/view-main';
+import './editor';
 
 class TeslaCard extends LitElement {
   static get properties() {
@@ -27,12 +28,20 @@ class TeslaCard extends LitElement {
     }
     this._config = { ...DEFAULT_CONFIG, ...config };
     this._entityMap = buildEntityMap(this._config.entity_prefix);
+    this._entityMapResolved = false;
   }
+
+  private _entityMapResolved = false;
 
   set hass(hass: Hass) {
     const oldHass = (this as any).__hass;
     (this as any).__hass = hass;
-    if (hass && this._entityMap) {
+    if (hass && this._config) {
+      // Auto-detect entity IDs on first hass update
+      if (!this._entityMapResolved) {
+        this._entityMap = buildEntityMap(this._config.entity_prefix, hass);
+        this._entityMapResolved = true;
+      }
       this._vehicleState = extractVehicleState(hass, this._entityMap);
     }
     this.requestUpdate('hass', oldHass);
