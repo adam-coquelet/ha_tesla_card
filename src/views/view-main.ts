@@ -114,15 +114,28 @@ class TeslaViewMain extends LitElement {
   }
 
   private _renderChargeContent(s: TeslaVehicleState) {
-    const rawMin = s.time_to_full_charge;
     let timeStr = '';
-    if (rawMin !== null && rawMin > 0) {
-      const h = Math.floor(rawMin / 60);
-      const m = Math.round(rawMin % 60);
+    const raw = s.time_to_full_charge;
+    if (raw !== null && raw > 0) {
+      // Detect format: >1000000 = timestamp (epoch seconds), >1440 = maybe hours as decimal, else minutes
+      let totalMin: number;
+      if (raw > 1000000000) {
+        // Unix timestamp: compute difference from now
+        totalMin = Math.max(0, Math.round((raw * 1000 - Date.now()) / 60000));
+      } else if (raw <= 24) {
+        // Likely hours (decimal) — e.g. 1.5 = 1h30
+        totalMin = Math.round(raw * 60);
+      } else {
+        // Minutes
+        totalMin = Math.round(raw);
+      }
+      const h = Math.floor(totalMin / 60);
+      const m = totalMin % 60;
       const hr = this._t('hr'), mn = this._t('min'), rem = this._t('remaining');
       if (h > 0 && m > 0) timeStr = `${h} ${hr} ${m} ${mn} ${rem}`;
       else if (h > 0) timeStr = `${h} ${hr} ${rem}`;
-      else timeStr = `${m} ${mn} ${rem}`;
+      else if (m > 0) timeStr = `${m} ${mn} ${rem}`;
+      else timeStr = this._t('calculating');
     } else {
       timeStr = this._t('calculating');
     }
