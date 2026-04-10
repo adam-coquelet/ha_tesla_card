@@ -11,6 +11,7 @@ export interface TeslaCardConfig {
   show_lock?: boolean;
   show_charge_port?: boolean;
   show_frunk?: boolean;
+  show_trunk?: boolean;
   show_vent?: boolean;
   show_climate?: boolean;
 }

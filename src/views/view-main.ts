@@ -7,6 +7,7 @@ const i18n: Record<string, Record<string, string>> = {
     lock: 'Lock',
     charge: 'Charge',
     frunk: 'Frunk',
+    trunk: 'Trunk',
     vent: 'Vent',
     climate: 'Climate',
     hr: 'hr',
@@ -21,6 +22,7 @@ const i18n: Record<string, Record<string, string>> = {
     lock: 'Verrouiller',
     charge: 'Recharge',
     frunk: 'Frunk',
+    trunk: 'Coffre',
     vent: 'Aérer',
     climate: 'Ventiler',
     hr: 'h',
@@ -95,6 +97,7 @@ class TeslaViewMain extends LitElement {
           ${this.config.show_charge_port !== false ? this._act(s.charger_door_open, iconChargePort, iconChargePort, this._t('charge'), () => this._toggleChargePort()) : ''}
           ${this.config.show_frunk !== false ? this._act(s.frunk_open, iconFrunk, iconFrunk, this._t('frunk'), () => this._openFrunk()) : ''}
           ${this.config.show_vent !== false ? this._act(s.windows_open, iconVent, iconVent, this._t('vent'), () => this._ventWindows()) : ''}
+          ${this.config.show_trunk !== false ? this._act(s.trunk_open, iconTrunk, iconTrunk, this._t('trunk'), () => this._toggleTrunk()) : ''}
           ${this.config.show_climate !== false ? this._act(s.is_climate_on, iconClimate, iconClimate, this._t('climate'), () => this._toggleClimate()) : ''}
           </div>
         </div>
@@ -202,6 +205,7 @@ class TeslaViewMain extends LitElement {
   private _ventWindows() { this.hass?.callService('cover', this.vehicleState.windows_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.windows }); }
   private _toggleChargePort() { this.hass?.callService('cover', this.vehicleState.charger_door_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.charger_door }); }
   private _openFrunk() { this.hass?.callService('cover', 'open_cover', { entity_id: this.entityMap.frunk }); }
+  private _toggleTrunk() { this.hass?.callService('cover', this.vehicleState.trunk_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.trunk }); }
   private _tempUp() { const t = this.vehicleState.climate_target_temp ?? 20; this.hass?.callService('climate', 'set_temperature', { entity_id: this.entityMap.climate, temperature: Math.min(30, t + 0.5) }); }
   private _tempDown() { const t = this.vehicleState.climate_target_temp ?? 20; this.hass?.callService('climate', 'set_temperature', { entity_id: this.entityMap.climate, temperature: Math.max(15, t - 0.5) }); }
 
@@ -221,7 +225,7 @@ class TeslaViewMain extends LitElement {
       .cp {
         position: absolute;
         top: -30px;
-        left: -18px;
+        left: 0;
         bottom: 0;
         z-index: 5;
         display: flex;
@@ -378,7 +382,7 @@ class TeslaViewMain extends LitElement {
          ════════════════════════════════ */
       .cl {
         position: absolute;
-        right: -19px;
+        right: -3px;
         top: 0;
         bottom: 50px;
         display: flex;
@@ -479,6 +483,8 @@ const iconChargePort = html`<svg viewBox="26 16 52 74" fill="none"><path d="M51.
 // Frunk (Tesla official)
 // Frunk (Tesla official)
 const iconFrunk = html`<svg viewBox="14 17 76 72" fill="none"><path fill-rule="evenodd" d="M57.79 39.34Q38.56 39.68 21.86 47.46C19.22 48.69 17.23 50.25 17.07 53.04Q16.93 55.37 17.03 68.26C17.07 73.04 20.96 75.04 25.71 75.29Q26.41 75.32 32.58 75.95A1.66 1.64 74.8 0 1 33.77 76.64C40.31 85.79 52.81 85.66 59.62 76.85A0.88 0.87 18.1 0 1 60.32 76.50L83.64 76.50A3.20 3.20 0 0 0 86.84 73.30L86.84 72.83A3.33 3.33 0 0 0 83.51 69.50L63.06 69.50A0.57 0.57 0 0 1 62.49 68.91Q62.68 60.78 56.96 55.79C53.25 52.55 47.23 51.07 42.75 52.52Q31.34 56.18 30.93 68.49A0.25 0.25 0 0 1 30.65 68.73L24.34 68.12A0.37 0.37 0 0 1 24.00 67.75L24.00 54.81A1.05 1.04-12.4 0 1 24.61 53.86Q44.11 44.94 64.71 46.71A5.57 5.52 34.1 0 0 67.63 46.16L85.07 37.63A3.41 3.41 0 0 0 86.67 33.15L86.62 33.04A3.44 3.43 64.9 0 0 81.97 31.35L68.32 38.05A0.92 0.91 53.8 0 1 67.27 37.88Q52.58 23.40 30.83 19.69A3.40 3.40 0 0 0 26.91 22.47L26.87 22.69A3.44 3.44 0 0 0 29.73 26.66Q45.63 29.14 57.95 38.87A0.26 0.26 0 0 1 57.79 39.34ZM55.47 67.75A8.72 8.72 0 0 0 46.75 59.03A8.72 8.72 0 0 0 38.03 67.75A8.72 8.72 0 0 0 46.75 76.47A8.72 8.72 0 0 0 55.47 67.75Z" fill="currentColor"/></svg>`;
+// Trunk
+const iconTrunk = html`<svg viewBox="0 0 24 24"><path d="M21.548 13.363l-.248-.473l.013-1.291c.005-.206.27-.022.339-.215l.255-.891c.34-.635-.577-1.621-.912-1.557l-3.267-.687a11.4 11.4 0 0 1-1.768-.525l-.267-.1L17.986 5.3a.816.816 0 0 1 1.322.135l.307.377a1.115 1.115 0 0 0 1.582.148a.87.87 0 0 0 .078-1.254l-1.424-1.343a1.574 1.574 0 0 0-2.41 0l-3.67 3.514l-5.249-2.034a5.9 5.9 0 0 0-2.139-.4H3.046a1.046 1.046 0 0 0 0 2.092H6.1a5.4 5.4 0 0 1 1.932.365l7.121 2.758a13.5 13.5 0 0 0 2.035.608l.652.14c.7.152 1.844.126 1.5.759l-.229.436l.017 1.651l.566.993A1.1 1.1 0 0 1 20 15v.585a1.08 1.08 0 0 1-1.08 1.08h-1.152c.013-.129.028-.256.032-.387c0-.045.007-.088.007-.132a5.062 5.062 0 1 0-10.124 0v.085c0 .147.017.29.032.434H3.046a1.047 1.047 0 0 0 0 2.093h5.383a5.027 5.027 0 0 0 8.633 0h2.3c1.509 0 2.613-.681 2.613-2.189L22 14.325a1.8 1.8 0 0 0-.452-.962M10.2 16.238c0-.032-.01-.063-.01-.1a2.551 2.551 0 1 1 5.1 0c0 .041-.01.079-.012.12a2.5 2.5 0 0 1-.053.4a2.55 2.55 0 0 1-1.386 1.773a2.46 2.46 0 0 1-2.24-.023a2.57 2.57 0 0 1-1.4-2.173z" fill="currentColor"/></svg>`;
 // Climate / fan (Tesla official — 4 blades only)
 const iconClimate = html`<svg viewBox="16 13 76 76" fill="none"><path d="M52.27 46.50L52.23 18.72A2.65 2.65 0 0 0 49.57 16.08L49.36 16.08A16.43 16.36 89.9 0 0 33.03 32.54L33.03 32.76A16.43 16.36 89.9 0 0 49.42 49.16L49.63 49.16A2.65 2.65 0 0 0 52.27 46.50Z" fill="currentColor"/><path d="M58.37 49.25L86.39 49.25A2.53 2.53 0 0 0 88.92 46.72L88.92 46.39A16.42 16.36 0 0 0 72.50 30.03L72.26 30.03A16.42 16.36 0 0 0 55.84 46.39L55.84 46.72A2.53 2.53 0 0 0 58.37 49.25Z" fill="currentColor"/><path d="M49.55 52.72L21.69 52.76A2.62 2.62 0 0 0 19.08 55.39L19.08 55.62A16.44 16.37-0.1 0 0 35.55 71.96L35.77 71.96A16.44 16.37-0.1 0 0 52.18 55.56L52.18 55.33A2.62 2.62 0 0 0 49.55 52.72Z" fill="currentColor"/><path d="M55.72 55.36L55.76 83.38A2.53 2.53 0 0 0 58.30 85.90L58.62 85.90A16.44 16.37 89.9 0 0 74.96 69.43L74.96 69.23A16.44 16.37 89.9 0 0 58.56 52.82L58.24 52.82A2.53 2.53 0 0 0 55.72 55.36Z" fill="currentColor"/></svg>`;
 

@@ -39,6 +39,7 @@ export const DEFAULT_CONFIG = {
   show_lock: true,
   show_charge_port: true,
   show_frunk: true,
+  show_trunk: true,
   show_vent: true,
   show_climate: true,
 };

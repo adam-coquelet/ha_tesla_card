@@ -3,23 +3,170 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,i=Symbol(),r=new WeakMap;let s=class{constructor(e,t,r){if(this._$cssResult$=!0,r!==i)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o;const i=this.t;if(t&&void 0===e){const t=void 0!==i&&1===i.length;t&&(e=r.get(i)),void 0===e&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),t&&r.set(i,e))}return e}toString(){return this.cssText}};const n=(e,...t)=>{const r=1===e.length?e[0]:t.reduce((t,i,r)=>t+(e=>{if(!0===e._$cssResult$)return e.cssText;if("number"==typeof e)return e;throw Error("Value passed to 'css' function must be a 'css' function result: "+e+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+e[r+1],e[0]);return new s(r,e,i)},a=t?e=>e:e=>e instanceof CSSStyleSheet?(e=>{let t="";for(const i of e.cssRules)t+=i.cssText;return(e=>new s("string"==typeof e?e:e+"",void 0,i))(t)})(e):e,{is:o,defineProperty:l,getOwnPropertyDescriptor:c,getOwnPropertyNames:h,getOwnPropertySymbols:_,getPrototypeOf:d}=Object,p=globalThis,g=p.trustedTypes,u=g?g.emptyScript:"",m=p.reactiveElementPolyfillSupport,f=(e,t)=>e,v={toAttribute(e,t){switch(t){case Boolean:e=e?u:null;break;case Object:case Array:e=null==e?e:JSON.stringify(e)}return e},fromAttribute(e,t){let i=e;switch(t){case Boolean:i=null!==e;break;case Number:i=null===e?null:Number(e);break;case Object:case Array:try{i=JSON.parse(e)}catch(e){i=null}}return i}},$=(e,t)=>!o(e,t),y={attribute:!0,type:String,converter:v,reflect:!1,useDefault:!1,hasChanged:$};
+const t$2=globalThis,e$2=t$2.ShadowRoot&&(void 0===t$2.ShadyCSS||t$2.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$2=Symbol(),o$3=new WeakMap;let n$2 = class n{constructor(t,e,o){if(this._$cssResult$=true,o!==s$2)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$2&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=o$3.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&o$3.set(s,t));}return t}toString(){return this.cssText}};const r$2=t=>new n$2("string"==typeof t?t:t+"",void 0,s$2),i$3=(t,...e)=>{const o=1===t.length?t[0]:e.reduce((e,s,o)=>e+(t=>{if(true===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[o+1],t[0]);return new n$2(o,t,s$2)},S$1=(s,o)=>{if(e$2)s.adoptedStyleSheets=o.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of o){const o=document.createElement("style"),n=t$2.litNonce;void 0!==n&&o.setAttribute("nonce",n),o.textContent=e.cssText,s.appendChild(o);}},c$2=e$2?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */Symbol.metadata??=Symbol("metadata"),p.litPropertyMetadata??=new WeakMap;let b=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=y){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){const i=Symbol(),r=this.getPropertyDescriptor(e,i,t);void 0!==r&&l(this.prototype,e,r)}}static getPropertyDescriptor(e,t,i){const{get:r,set:s}=c(this.prototype,e)??{get(){return this[t]},set(e){this[t]=e}};return{get:r,set(t){const n=r?.call(this);s?.call(this,t),this.requestUpdate(e,n,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??y}static _$Ei(){if(this.hasOwnProperty(f("elementProperties")))return;const e=d(this);e.finalize(),void 0!==e.l&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty(f("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(f("properties"))){const e=this.properties,t=[...h(e),..._(e)];for(const i of t)this.createProperty(i,e[i])}const e=this[Symbol.metadata];if(null!==e){const t=litPropertyMetadata.get(e);if(void 0!==t)for(const[e,i]of t)this.elementProperties.set(e,i)}this._$Eh=new Map;for(const[e,t]of this.elementProperties){const i=this._$Eu(e,t);void 0!==i&&this._$Eh.set(i,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){const t=[];if(Array.isArray(e)){const i=new Set(e.flat(1/0).reverse());for(const e of i)t.unshift(a(e))}else void 0!==e&&t.push(a(e));return t}static _$Eu(e,t){const i=t.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof e?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),void 0!==this.renderRoot&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){const e=new Map,t=this.constructor.elementProperties;for(const i of t.keys())this.hasOwnProperty(i)&&(e.set(i,this[i]),delete this[i]);e.size>0&&(this._$Ep=e)}createRenderRoot(){const i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((i,r)=>{if(t)i.adoptedStyleSheets=r.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(const t of r){const r=document.createElement("style"),s=e.litNonce;void 0!==s&&r.setAttribute("nonce",s),r.textContent=t.cssText,i.appendChild(r)}})(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,i){this._$AK(e,i)}_$ET(e,t){const i=this.constructor.elementProperties.get(e),r=this.constructor._$Eu(e,i);if(void 0!==r&&!0===i.reflect){const s=(void 0!==i.converter?.toAttribute?i.converter:v).toAttribute(t,i.type);this._$Em=e,null==s?this.removeAttribute(r):this.setAttribute(r,s),this._$Em=null}}_$AK(e,t){const i=this.constructor,r=i._$Eh.get(e);if(void 0!==r&&this._$Em!==r){const e=i.getPropertyOptions(r),s="function"==typeof e.converter?{fromAttribute:e.converter}:void 0!==e.converter?.fromAttribute?e.converter:v;this._$Em=r;const n=s.fromAttribute(t,e.type);this[r]=n??this._$Ej?.get(r)??n,this._$Em=null}}requestUpdate(e,t,i,r=!1,s){if(void 0!==e){const n=this.constructor;if(!1===r&&(s=this[e]),i??=n.getPropertyOptions(e),!((i.hasChanged??$)(s,t)||i.useDefault&&i.reflect&&s===this._$Ej?.get(e)&&!this.hasAttribute(n._$Eu(e,i))))return;this.C(e,t,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(e,t,{useDefault:i,reflect:r,wrapped:s},n){i&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,n??t??this[e]),!0!==s||void 0!==n)||(this._$AL.has(e)||(this.hasUpdated||i||(t=void 0),this._$AL.set(e,t)),!0===r&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}const e=this.scheduleUpdate();return null!=e&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[e,t]of this._$Ep)this[e]=t;this._$Ep=void 0}const e=this.constructor.elementProperties;if(e.size>0)for(const[t,i]of e){const{wrapped:e}=i,r=this[t];!0!==e||this._$AL.has(t)||void 0===r||this.C(t,void 0,i,r)}}let e=!1;const t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(e=>e.hostUpdate?.()),this.update(t)):this._$EM()}catch(t){throw e=!1,this._$EM(),t}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(e){}firstUpdated(e){}};b.elementStyles=[],b.shadowRootOptions={mode:"open"},b[f("elementProperties")]=new Map,b[f("finalized")]=new Map,m?.({ReactiveElement:b}),(p.reactiveElementVersions??=[]).push("2.1.2");
+ */const{is:i$2,defineProperty:e$1,getOwnPropertyDescriptor:h$1,getOwnPropertyNames:r$1,getOwnPropertySymbols:o$2,getPrototypeOf:n$1}=Object,a$1=globalThis,c$1=a$1.trustedTypes,l$1=c$1?c$1.emptyScript:"",p$1=a$1.reactiveElementPolyfillSupport,d$1=(t,s)=>t,u$1={toAttribute(t,s){switch(s){case Boolean:t=t?l$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,s){let i=t;switch(s){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t);}catch(t){i=null;}}return i}},f$1=(t,s)=>!i$2(t,s),b$1={attribute:true,type:String,converter:u$1,reflect:false,useDefault:false,hasChanged:f$1};Symbol.metadata??=Symbol("metadata"),a$1.litPropertyMetadata??=new WeakMap;let y$1 = class y extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t);}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,s=b$1){if(s.state&&(s.attribute=false),this._$Ei(),this.prototype.hasOwnProperty(t)&&((s=Object.create(s)).wrapped=true),this.elementProperties.set(t,s),!s.noAccessor){const i=Symbol(),h=this.getPropertyDescriptor(t,i,s);void 0!==h&&e$1(this.prototype,t,h);}}static getPropertyDescriptor(t,s,i){const{get:e,set:r}=h$1(this.prototype,t)??{get(){return this[s]},set(t){this[s]=t;}};return {get:e,set(s){const h=e?.call(this);r?.call(this,s),this.requestUpdate(t,h,i);},configurable:true,enumerable:true}}static getPropertyOptions(t){return this.elementProperties.get(t)??b$1}static _$Ei(){if(this.hasOwnProperty(d$1("elementProperties")))return;const t=n$1(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties);}static finalize(){if(this.hasOwnProperty(d$1("finalized")))return;if(this.finalized=true,this._$Ei(),this.hasOwnProperty(d$1("properties"))){const t=this.properties,s=[...r$1(t),...o$2(t)];for(const i of s)this.createProperty(i,t[i]);}const t=this[Symbol.metadata];if(null!==t){const s=litPropertyMetadata.get(t);if(void 0!==s)for(const[t,i]of s)this.elementProperties.set(t,i);}this._$Eh=new Map;for(const[t,s]of this.elementProperties){const i=this._$Eu(t,s);void 0!==i&&this._$Eh.set(i,t);}this.elementStyles=this.finalizeStyles(this.styles);}static finalizeStyles(s){const i=[];if(Array.isArray(s)){const e=new Set(s.flat(1/0).reverse());for(const s of e)i.unshift(c$2(s));}else void 0!==s&&i.push(c$2(s));return i}static _$Eu(t,s){const i=s.attribute;return  false===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=false,this.hasUpdated=false,this._$Em=null,this._$Ev();}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this));}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.();}removeController(t){this._$EO?.delete(t);}_$E_(){const t=new Map,s=this.constructor.elementProperties;for(const i of s.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t);}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return S$1(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(true),this._$EO?.forEach(t=>t.hostConnected?.());}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.());}attributeChangedCallback(t,s,i){this._$AK(t,i);}_$ET(t,s){const i=this.constructor.elementProperties.get(t),e=this.constructor._$Eu(t,i);if(void 0!==e&&true===i.reflect){const h=(void 0!==i.converter?.toAttribute?i.converter:u$1).toAttribute(s,i.type);this._$Em=t,null==h?this.removeAttribute(e):this.setAttribute(e,h),this._$Em=null;}}_$AK(t,s){const i=this.constructor,e=i._$Eh.get(t);if(void 0!==e&&this._$Em!==e){const t=i.getPropertyOptions(e),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:u$1;this._$Em=e;const r=h.fromAttribute(s,t.type);this[e]=r??this._$Ej?.get(e)??r,this._$Em=null;}}requestUpdate(t,s,i,e=false,h){if(void 0!==t){const r=this.constructor;if(false===e&&(h=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??f$1)(h,s)||i.useDefault&&i.reflect&&h===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,s,i);} false===this.isUpdatePending&&(this._$ES=this._$EP());}C(t,s,{useDefault:i,reflect:e,wrapped:h},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??s??this[t]),true!==h||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(s=void 0),this._$AL.set(t,s)),true===e&&this._$Em!==t&&(this._$Eq??=new Set).add(t));}async _$EP(){this.isUpdatePending=true;try{await this._$ES;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,s]of this._$Ep)this[t]=s;this._$Ep=void 0;}const t=this.constructor.elementProperties;if(t.size>0)for(const[s,i]of t){const{wrapped:t}=i,e=this[s];true!==t||this._$AL.has(s)||void 0===e||this.C(s,void 0,i,e);}}let t=false;const s=this._$AL;try{t=this.shouldUpdate(s),t?(this.willUpdate(s),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(s)):this._$EM();}catch(s){throw t=false,this._$EM(),s}t&&this._$AE(s);}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=true,this.firstUpdated(t)),this.updated(t);}_$EM(){this._$AL=new Map,this.isUpdatePending=false;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return  true}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM();}updated(t){}firstUpdated(t){}};y$1.elementStyles=[],y$1.shadowRootOptions={mode:"open"},y$1[d$1("elementProperties")]=new Map,y$1[d$1("finalized")]=new Map,p$1?.({ReactiveElement:y$1}),(a$1.reactiveElementVersions??=[]).push("2.1.2");
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{createHTML:e=>e}):void 0,C="$lit$",S=`lit$${Math.random().toFixed(9).slice(2)}$`,k="?"+S,M=`<${k}>`,E=document,L=()=>E.createComment(""),B=e=>null===e||"object"!=typeof e&&"function"!=typeof e,N=Array.isArray,T="[ \t\n\f\r]",W=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,R=/-->/g,Q=/>/g,U=RegExp(`>|${T}(?:([^\\s"'>=/]+)(${T}*=${T}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),I=/'/g,O=/"/g,H=/^(?:script|style|textarea|title)$/i,z=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),D=Symbol.for("lit-noChange"),Y=Symbol.for("lit-nothing"),F=new WeakMap,j=E.createTreeWalker(E,129);function X(e,t){if(!N(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==x?x.createHTML(t):t}const Z=(e,t)=>{const i=e.length-1,r=[];let s,n=2===t?"<svg>":3===t?"<math>":"",a=W;for(let t=0;t<i;t++){const i=e[t];let o,l,c=-1,h=0;for(;h<i.length&&(a.lastIndex=h,l=a.exec(i),null!==l);)h=a.lastIndex,a===W?"!--"===l[1]?a=R:void 0!==l[1]?a=Q:void 0!==l[2]?(H.test(l[2])&&(s=RegExp("</"+l[2],"g")),a=U):void 0!==l[3]&&(a=U):a===U?">"===l[0]?(a=s??W,c=-1):void 0===l[1]?c=-2:(c=a.lastIndex-l[2].length,o=l[1],a=void 0===l[3]?U:'"'===l[3]?O:I):a===O||a===I?a=U:a===R||a===Q?a=W:(a=U,s=void 0);const _=a===U&&e[t+1].startsWith("/>")?" ":"";n+=a===W?i+M:c>=0?(r.push(o),i.slice(0,c)+C+i.slice(c)+S+_):i+S+(-2===c?t:_)}return[X(e,n+(e[i]||"<?>")+(2===t?"</svg>":3===t?"</math>":"")),r]};class V{constructor({strings:e,_$litType$:t},i){let r;this.parts=[];let s=0,n=0;const a=e.length-1,o=this.parts,[l,c]=Z(e,t);if(this.el=V.createElement(l,i),j.currentNode=this.el.content,2===t||3===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(r=j.nextNode())&&o.length<a;){if(1===r.nodeType){if(r.hasAttributes())for(const e of r.getAttributeNames())if(e.endsWith(C)){const t=c[n++],i=r.getAttribute(e).split(S),a=/([.?@])?(.*)/.exec(t);o.push({type:1,index:s,name:a[2],strings:i,ctor:"."===a[1]?ee:"?"===a[1]?te:"@"===a[1]?ie:K}),r.removeAttribute(e)}else e.startsWith(S)&&(o.push({type:6,index:s}),r.removeAttribute(e));if(H.test(r.tagName)){const e=r.textContent.split(S),t=e.length-1;if(t>0){r.textContent=P?P.emptyScript:"";for(let i=0;i<t;i++)r.append(e[i],L()),j.nextNode(),o.push({type:2,index:++s});r.append(e[t],L())}}}else if(8===r.nodeType)if(r.data===k)o.push({type:2,index:s});else{let e=-1;for(;-1!==(e=r.data.indexOf(S,e+1));)o.push({type:7,index:s}),e+=S.length-1}s++}}static createElement(e,t){const i=E.createElement("template");return i.innerHTML=e,i}}function q(e,t,i=e,r){if(t===D)return t;let s=void 0!==r?i._$Co?.[r]:i._$Cl;const n=B(t)?void 0:t._$litDirective$;return s?.constructor!==n&&(s?._$AO?.(!1),void 0===n?s=void 0:(s=new n(e),s._$AT(e,i,r)),void 0!==r?(i._$Co??=[])[r]=s:i._$Cl=s),void 0!==s&&(t=q(e,s._$AS(e,t.values),s,r)),t}class G{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,r=(e?.creationScope??E).importNode(t,!0);j.currentNode=r;let s=j.nextNode(),n=0,a=0,o=i[0];for(;void 0!==o;){if(n===o.index){let t;2===o.type?t=new J(s,s.nextSibling,this,e):1===o.type?t=new o.ctor(s,o.name,o.strings,this,e):6===o.type&&(t=new re(s,this,e)),this._$AV.push(t),o=i[++a]}n!==o?.index&&(s=j.nextNode(),n++)}return j.currentNode=E,r}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class J{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,r){this.type=2,this._$AH=Y,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=r,this._$Cv=r?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=q(this,e,t),B(e)?e===Y||null==e||""===e?(this._$AH!==Y&&this._$AR(),this._$AH=Y):e!==this._$AH&&e!==D&&this._(e):void 0!==e._$litType$?this.$(e):void 0!==e.nodeType?this.T(e):(e=>N(e)||"function"==typeof e?.[Symbol.iterator])(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==Y&&B(this._$AH)?this._$AA.nextSibling.data=e:this.T(E.createTextNode(e)),this._$AH=e}$(e){const{values:t,_$litType$:i}=e,r="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=V.createElement(X(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===r)this._$AH.p(t);else{const e=new G(r,this),i=e.u(this.options);e.p(t),this.T(i),this._$AH=e}}_$AC(e){let t=F.get(e.strings);return void 0===t&&F.set(e.strings,t=new V(e)),t}k(e){N(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,r=0;for(const s of e)r===t.length?t.push(i=new J(this.O(L()),this.O(L()),this,this.options)):i=t[r],i._$AI(s),r++;r<t.length&&(this._$AR(i&&i._$AB.nextSibling,r),t.length=r)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){const t=w(e).nextSibling;w(e).remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class K{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,r,s){this.type=1,this._$AH=Y,this._$AN=void 0,this.element=e,this.name=t,this._$AM=r,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=Y}_$AI(e,t=this,i,r){const s=this.strings;let n=!1;if(void 0===s)e=q(this,e,t,0),n=!B(e)||e!==this._$AH&&e!==D,n&&(this._$AH=e);else{const r=e;let a,o;for(e=s[0],a=0;a<s.length-1;a++)o=q(this,r[i+a],t,a),o===D&&(o=this._$AH[a]),n||=!B(o)||o!==this._$AH[a],o===Y?e=Y:e!==Y&&(e+=(o??"")+s[a+1]),this._$AH[a]=o}n&&!r&&this.j(e)}j(e){e===Y?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ee extends K{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===Y?void 0:e}}class te extends K{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==Y)}}class ie extends K{constructor(e,t,i,r,s){super(e,t,i,r,s),this.type=5}_$AI(e,t=this){if((e=q(this,e,t,0)??Y)===D)return;const i=this._$AH,r=e===Y&&i!==Y||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,s=e!==Y&&(i===Y||r);r&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class re{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){q(this,e)}}const se=A.litHtmlPolyfillSupport;se?.(V,J),(A.litHtmlVersions??=[]).push("3.3.2");const ne=globalThis;
+const t$1=globalThis,i$1=t=>t,s$1=t$1.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$1=`lit$${Math.random().toFixed(9).slice(2)}$`,n="?"+o$1,r=`<${n}>`,l=document,c=()=>l.createComment(""),a=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,d=t=>u(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l.createTreeWalker(l,129);function V(t,i){if(!u(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$1+x):s+o$1+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$1),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$1)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$1),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$1,t+1));)d.push({type:7,index:l}),t+=o$1.length-1;}l++;}}static createElement(t,i){const s=l.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a(this._$AH)?this._$AA.nextSibling.data=t:this.T(l.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$1(t).nextSibling;i$1(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t$1.litHtmlPolyfillSupport;B?.(S,k),(t$1.litHtmlVersions??=[]).push("3.3.2");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */class ae extends b{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){const t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=((e,t,i)=>{const r=i?.renderBefore??t;let s=r._$litPart$;if(void 0===s){const e=i?.renderBefore??null;r._$litPart$=s=new J(t.insertBefore(L(),e),e,void 0,i??{})}return s._$AI(e),s})(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return D}}ae._$litElement$=!0,ae.finalized=!0,ne.litElementHydrateSupport?.({LitElement:ae});const oe=ne.litElementPolyfillSupport;oe?.({LitElement:ae}),(ne.litElementVersions??=[]).push("4.2.2");const le="1.0.0",ce={pearl_white:{name:"Pearl White Multi-Coat",hex:"#ECF0F1",metallic:!0},solid_black:{name:"Solid Black",hex:"#1A1A1A",metallic:!1},midnight_silver:{name:"Midnight Silver Metallic",hex:"#4A4D51",metallic:!0},deep_blue:{name:"Deep Blue Metallic",hex:"#1B2A49",metallic:!0},red_multi_coat:{name:"Red Multi-Coat",hex:"#A5171B",metallic:!0},ultra_red:{name:"Ultra Red",hex:"#C41E3A",metallic:!0},quicksilver:{name:"Quicksilver",hex:"#B8BAC0",metallic:!0},midnight_cherry:{name:"Midnight Cherry Red",hex:"#5C0A1A",metallic:!0},stealth_grey:{name:"Stealth Grey",hex:"#393C41",metallic:!1},ultra_white:{name:"Ultra White",hex:"#FAFAFA",metallic:!1},lunar_silver:{name:"Lunar Silver",hex:"#A8A9AD",metallic:!0},diamond_black:{name:"Diamond Black",hex:"#0D0D0D",metallic:!0}},he={vehicle_model:"model_3",vehicle_variant:"standard",paint_color:"pearl_white",show_vehicle:!0,default_view:"main",show_lock:!0,show_charge_port:!0,show_frunk:!0,show_vent:!0,show_climate:!0};function _e(e,t){return e.states[t]}function de(e,t){const i=_e(e,t);if(!i||"unavailable"===i.state||"unknown"===i.state)return null;const r=parseFloat(i.state);return isNaN(r)?null:r}function pe(e,t,i=["on"]){const r=_e(e,t);return!!r&&i.includes(r.state)}function ge(e,t){const i=_e(e,t);return!!i&&"open"===i.state}const ue=n`
+ */const s=globalThis;class i extends y$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const r=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(r,this.renderRoot,this.renderOptions);}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(true);}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(false);}render(){return E}}i._$litElement$=true,i["finalized"]=true,s.litElementHydrateSupport?.({LitElement:i});const o=s.litElementPolyfillSupport;o?.({LitElement:i});(s.litElementVersions??=[]).push("4.2.2");
+
+const CARD_VERSION = '1.0.0';
+const PAINT_COLORS = {
+    pearl_white: { name: 'Pearl White Multi-Coat', hex: '#ECF0F1', metallic: true },
+    solid_black: { name: 'Solid Black', hex: '#1A1A1A', metallic: false },
+    midnight_silver: { name: 'Midnight Silver Metallic', hex: '#4A4D51', metallic: true },
+    deep_blue: { name: 'Deep Blue Metallic', hex: '#1B2A49', metallic: true },
+    red_multi_coat: { name: 'Red Multi-Coat', hex: '#A5171B', metallic: true },
+    ultra_red: { name: 'Ultra Red', hex: '#C41E3A', metallic: true },
+    quicksilver: { name: 'Quicksilver', hex: '#B8BAC0', metallic: true },
+    midnight_cherry: { name: 'Midnight Cherry Red', hex: '#5C0A1A', metallic: true },
+    stealth_grey: { name: 'Stealth Grey', hex: '#393C41', metallic: false },
+    ultra_white: { name: 'Ultra White', hex: '#FAFAFA', metallic: false },
+    lunar_silver: { name: 'Lunar Silver', hex: '#A8A9AD', metallic: true },
+    diamond_black: { name: 'Diamond Black', hex: '#0D0D0D', metallic: true },
+};
+const DEFAULT_CONFIG = {
+    vehicle_model: 'model_3',
+    vehicle_variant: 'standard',
+    paint_color: 'pearl_white',
+    show_vehicle: true,
+    default_view: 'main',
+    show_lock: true,
+    show_charge_port: true,
+    show_frunk: true,
+    show_trunk: true,
+    show_vent: true,
+    show_climate: true,
+};
+
+function buildEntityMap(prefix) {
+    const p = prefix;
+    return {
+        climate: `climate.${p}_climate`,
+        door_lock: `lock.${p}_door_lock`,
+        charge_cable_lock: `lock.${p}_charge_cable_lock`,
+        frunk: `cover.${p}_frunk`,
+        trunk: `cover.${p}_trunk`,
+        charger_door: `cover.${p}_charger_door`,
+        windows: `cover.${p}_windows`,
+        charging: `switch.${p}_charging`,
+        sentry_mode: `switch.${p}_sentry_mode`,
+        defrost: `switch.${p}_defrost`,
+        battery_level: `sensor.${p}_battery_level`,
+        battery_range: `sensor.${p}_battery_range`,
+        inside_temperature: `sensor.${p}_inside_temperature`,
+        outside_temperature: `sensor.${p}_outside_temperature`,
+        odometer: `sensor.${p}_odometer`,
+        charging_power: `sensor.${p}_charging_power`,
+        charge_rate: `sensor.${p}_charge_rate`,
+        charge_energy_added: `sensor.${p}_charge_energy_added`,
+        charger_voltage: `sensor.${p}_charger_voltage`,
+        charger_current: `sensor.${p}_charger_current`,
+        time_to_full_charge: `sensor.${p}_time_to_full_charge`,
+        is_charging: `binary_sensor.${p}_charging`,
+        is_online: `binary_sensor.${p}_online`,
+        user_present: `binary_sensor.${p}_user_present`,
+        honk_horn: `button.${p}_honk_horn`,
+        flash_lights: `button.${p}_flash_lights`,
+        wake: `button.${p}_wake`,
+        charge_limit: `number.${p}_charge_limit`,
+        charge_current_number: `number.${p}_charging_amps`,
+        location: `device_tracker.${p}_location`,
+        seat_heater_front_left: `select.${p}_seat_heater_front_left`,
+        seat_heater_front_right: `select.${p}_seat_heater_front_right`,
+        seat_heater_rear_left: `select.${p}_seat_heater_rear_left`,
+        seat_heater_rear_right: `select.${p}_seat_heater_rear_right`,
+        steering_wheel_heater: `switch.${p}_steering_wheel_heater`,
+        firmware: `update.${p}_firmware`,
+    };
+}
+function getState(hass, entityId) {
+    return hass.states[entityId];
+}
+function getNumericState(hass, entityId) {
+    const entity = getState(hass, entityId);
+    if (!entity || entity.state === 'unavailable' || entity.state === 'unknown')
+        return null;
+    const val = parseFloat(entity.state);
+    return isNaN(val) ? null : val;
+}
+function getBoolState(hass, entityId, trueValues = ['on']) {
+    const entity = getState(hass, entityId);
+    if (!entity)
+        return false;
+    return trueValues.includes(entity.state);
+}
+function getCoverOpen(hass, entityId) {
+    const entity = getState(hass, entityId);
+    if (!entity)
+        return false;
+    return entity.state === 'open';
+}
+function extractVehicleState(hass, entityMap) {
+    const climate = getState(hass, entityMap.climate);
+    getState(hass, entityMap.battery_level);
+    const rangeEntity = getState(hass, entityMap.battery_range);
+    const insideTempEntity = getState(hass, entityMap.inside_temperature);
+    const odometerEntity = getState(hass, entityMap.odometer);
+    const locationEntity = getState(hass, entityMap.location);
+    const firmwareEntity = getState(hass, entityMap.firmware);
+    return {
+        battery_level: getNumericState(hass, entityMap.battery_level),
+        battery_range: getNumericState(hass, entityMap.battery_range),
+        range_unit: rangeEntity?.attributes?.unit_of_measurement || 'km',
+        is_locked: getState(hass, entityMap.door_lock)?.state === 'locked',
+        is_charging: getBoolState(hass, entityMap.is_charging) || getBoolState(hass, entityMap.charging),
+        is_online: getBoolState(hass, entityMap.is_online),
+        is_climate_on: climate?.state !== 'off' && climate?.state !== 'unavailable' && climate?.state !== undefined,
+        climate_target_temp: climate?.attributes?.temperature ?? null,
+        climate_current_temp: climate?.attributes?.current_temperature ?? null,
+        climate_hvac_mode: climate?.state || 'off',
+        inside_temp: getNumericState(hass, entityMap.inside_temperature),
+        outside_temp: getNumericState(hass, entityMap.outside_temperature),
+        temp_unit: insideTempEntity?.attributes?.unit_of_measurement || '°C',
+        charge_limit: getNumericState(hass, entityMap.charge_limit),
+        charge_current: getNumericState(hass, entityMap.charge_current_number),
+        charging_power: getNumericState(hass, entityMap.charging_power),
+        charge_rate: getNumericState(hass, entityMap.charge_rate),
+        charge_energy_added: getNumericState(hass, entityMap.charge_energy_added),
+        charger_voltage: getNumericState(hass, entityMap.charger_voltage),
+        time_to_full_charge: getNumericState(hass, entityMap.time_to_full_charge),
+        odometer: getNumericState(hass, entityMap.odometer),
+        odometer_unit: odometerEntity?.attributes?.unit_of_measurement || 'km',
+        sentry_mode: getBoolState(hass, entityMap.sentry_mode),
+        defrost_on: getBoolState(hass, entityMap.defrost),
+        frunk_open: getCoverOpen(hass, entityMap.frunk),
+        trunk_open: getCoverOpen(hass, entityMap.trunk),
+        charger_door_open: getCoverOpen(hass, entityMap.charger_door),
+        windows_open: getCoverOpen(hass, entityMap.windows),
+        firmware_version: firmwareEntity?.attributes?.installed_version ?? null,
+        firmware_update_available: firmwareEntity?.state === 'on',
+        seat_heater_front_left: getState(hass, entityMap.seat_heater_front_left)?.state || 'off',
+        seat_heater_front_right: getState(hass, entityMap.seat_heater_front_right)?.state || 'off',
+        seat_heater_rear_left: getState(hass, entityMap.seat_heater_rear_left)?.state || 'off',
+        seat_heater_rear_right: getState(hass, entityMap.seat_heater_rear_right)?.state || 'off',
+        steering_wheel_heater: getBoolState(hass, entityMap.steering_wheel_heater),
+        user_present: getBoolState(hass, entityMap.user_present),
+        latitude: locationEntity?.attributes?.latitude ?? null,
+        longitude: locationEntity?.attributes?.longitude ?? null,
+    };
+}
+
+const cardStyles = i$3 `
   :host {
     --tesla-primary: #4dd0e1;
     --tesla-bg: var(--ha-card-background, var(--card-background-color, #111114));
@@ -81,9 +228,104 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
   /* ── VIEW CONTENT ───────────────────────────────────────── */
   .view-content {
     flex: 1;
-    padding: 0 18px 16px;
+    padding: 0 0 16px;
   }
-`,me={model_3_PPSW_standard:{file:"MT369_PPSW_W38A_IPB3__m3.png",variant:"standard",wheels:"Photon"},model_3_PR01_standard:{file:"MT369_PR01_W38A_IPB3__m3.png",variant:"standard",wheels:"Photon"},model_3_PN00_standard:{file:"MT369_PN00_W38A_IPB3__m3.png",variant:"standard",wheels:"Photon"},model_3_PX02_standard:{file:"MT369_PX02_W38A_IPB3__m3.png",variant:"standard",wheels:"Photon"},model_3_PPSB_standard:{file:"MT369_PPSB_W38A_IPB3__m3.png",variant:"standard",wheels:"Photon"},model_3_PN01_standard:{file:"MT369_PN01_W38A_IPB3__m3.png",variant:"standard",wheels:"Photon"},model_3_PPSW_performance:{file:"MT371_PPSW_W30A_IPB4__m3.png",variant:"performance",wheels:"Nova"},model_3_PR01_performance:{file:"MT371_PR01_W30A_IPB4__m3.png",variant:"performance",wheels:"Nova"},model_3_PN00_performance:{file:"MT371_PN00_W30A_IPB4__m3.png",variant:"performance",wheels:"Nova"},model_3_PX02_performance:{file:"MT371_PX02_W30A_IPB4__m3.png",variant:"performance",wheels:"Nova"},model_3_PPSB_performance:{file:"MT371_PPSB_W30A_IPB4__m3.png",variant:"performance",wheels:"Nova"},model_3_PN01_performance:{file:"MT371_PN01_W30A_IPB4__m3.png",variant:"performance",wheels:"Nova"},model_y_PX02_standard:{file:"MTY61_PX02_WY18P_IBB3__my.png",variant:"standard",wheels:'18"'},model_y_PN01_standard:{file:"MTY61_PN01_WY18P_IBB3__my.png",variant:"standard",wheels:'18"'},model_y_PPSW_standard:{file:"MTY61_PPSW_WY18P_IBB3__my.png",variant:"standard",wheels:'18"'},model_y_PPSW_long_range:{file:"MTY48_PPSW_WY19P_IPB8__my.png",variant:"long_range",wheels:'19"'},model_y_PR01_long_range:{file:"MTY48_PR01_WY19P_IPB8__my.png",variant:"long_range",wheels:'19"'},model_y_PN00_long_range:{file:"MTY48_PN00_WY19P_IPB8__my.png",variant:"long_range",wheels:'19"'},model_y_PX02_long_range:{file:"MTY48_PX02_WY19P_IPB8__my.png",variant:"long_range",wheels:'19"'},model_y_PPSB_long_range:{file:"MTY48_PPSB_WY19P_IPB8__my.png",variant:"long_range",wheels:'19"'},model_y_PN01_long_range:{file:"MTY48_PN01_WY19P_IPB8__my.png",variant:"long_range",wheels:'19"'},model_y_PPSW_performance:{file:"MTY70_PPSW_WY21A_IPB10__my.png",variant:"performance",wheels:'21"'},model_y_PR01_performance:{file:"MTY70_PR01_WY21A_IPB10__my.png",variant:"performance",wheels:'21"'},model_y_PN00_performance:{file:"MTY70_PN00_WY21A_IPB10__my.png",variant:"performance",wheels:'21"'},model_y_PX02_performance:{file:"MTY70_PX02_WY21A_IPB10__my.png",variant:"performance",wheels:'21"'},model_y_PPSB_performance:{file:"MTY70_PPSB_WY21A_IPB10__my.png",variant:"performance",wheels:'21"'},model_y_PN01_performance:{file:"MTY70_PN01_WY21A_IPB10__my.png",variant:"performance",wheels:'21"'},cybertruck_PPSW_standard:{file:"MTC04_WH0B_IW04_APBS_APF2_CPF2_CYBR_PRS01_SC05_TW01__ct.png",variant:"standard",wheels:"Standard"},cybercab_PPSW_standard:{file:"cybercab.png",variant:"standard",wheels:"Standard"}},fe={pearl_white:"PPSW",ultra_red:"PR01",quicksilver:"PN00",diamond_black:"PX02",deep_blue:"PPSB",stealth_grey:"PN01",solid_black:"PX02",midnight_silver:"PN01",red_multi_coat:"PR01",midnight_cherry:"PR01",ultra_white:"PPSW",lunar_silver:"PN00"};const ve={};for(const[e,t]of Object.entries(fe))ve[t]||(ve[t]=e);customElements.define("tesla-vehicle-renderer",class extends ae{static get properties(){return{config:{type:Object},state:{type:Object}}}static get styles(){return n`
+`;
+
+const IMAGE_MAP = {
+    // ── Model 3 Standard (MT369) - Photon wheels ──
+    'model_3_PPSW_standard': { file: 'MT369_PPSW_W38A_IPB3__m3.png', variant: 'standard', wheels: 'Photon' },
+    'model_3_PR01_standard': { file: 'MT369_PR01_W38A_IPB3__m3.png', variant: 'standard', wheels: 'Photon' },
+    'model_3_PN00_standard': { file: 'MT369_PN00_W38A_IPB3__m3.png', variant: 'standard', wheels: 'Photon' },
+    'model_3_PX02_standard': { file: 'MT369_PX02_W38A_IPB3__m3.png', variant: 'standard', wheels: 'Photon' },
+    'model_3_PPSB_standard': { file: 'MT369_PPSB_W38A_IPB3__m3.png', variant: 'standard', wheels: 'Photon' },
+    'model_3_PN01_standard': { file: 'MT369_PN01_W38A_IPB3__m3.png', variant: 'standard', wheels: 'Photon' },
+    // ── Model 3 Performance (MT371) - Nova wheels ──
+    'model_3_PPSW_performance': { file: 'MT371_PPSW_W30A_IPB4__m3.png', variant: 'performance', wheels: 'Nova' },
+    'model_3_PR01_performance': { file: 'MT371_PR01_W30A_IPB4__m3.png', variant: 'performance', wheels: 'Nova' },
+    'model_3_PN00_performance': { file: 'MT371_PN00_W30A_IPB4__m3.png', variant: 'performance', wheels: 'Nova' },
+    'model_3_PX02_performance': { file: 'MT371_PX02_W30A_IPB4__m3.png', variant: 'performance', wheels: 'Nova' },
+    'model_3_PPSB_performance': { file: 'MT371_PPSB_W30A_IPB4__m3.png', variant: 'performance', wheels: 'Nova' },
+    'model_3_PN01_performance': { file: 'MT371_PN01_W30A_IPB4__m3.png', variant: 'performance', wheels: 'Nova' },
+    // ── Model Y Standard (MTY61) — 3 colors only ──
+    'model_y_PX02_standard': { file: 'MTY61_PX02_WY18P_IBB3__my.png', variant: 'standard', wheels: '18"' },
+    'model_y_PN01_standard': { file: 'MTY61_PN01_WY18P_IBB3__my.png', variant: 'standard', wheels: '18"' },
+    'model_y_PPSW_standard': { file: 'MTY61_PPSW_WY18P_IBB3__my.png', variant: 'standard', wheels: '18"' },
+    // ── Model Y Long Range (MTY48) ──
+    'model_y_PPSW_long_range': { file: 'MTY48_PPSW_WY19P_IPB8__my.png', variant: 'long_range', wheels: '19"' },
+    'model_y_PR01_long_range': { file: 'MTY48_PR01_WY19P_IPB8__my.png', variant: 'long_range', wheels: '19"' },
+    'model_y_PN00_long_range': { file: 'MTY48_PN00_WY19P_IPB8__my.png', variant: 'long_range', wheels: '19"' },
+    'model_y_PX02_long_range': { file: 'MTY48_PX02_WY19P_IPB8__my.png', variant: 'long_range', wheels: '19"' },
+    'model_y_PPSB_long_range': { file: 'MTY48_PPSB_WY19P_IPB8__my.png', variant: 'long_range', wheels: '19"' },
+    'model_y_PN01_long_range': { file: 'MTY48_PN01_WY19P_IPB8__my.png', variant: 'long_range', wheels: '19"' },
+    // ── Model Y Performance (MTY70) ──
+    'model_y_PPSW_performance': { file: 'MTY70_PPSW_WY21A_IPB10__my.png', variant: 'performance', wheels: '21"' },
+    'model_y_PR01_performance': { file: 'MTY70_PR01_WY21A_IPB10__my.png', variant: 'performance', wheels: '21"' },
+    'model_y_PN00_performance': { file: 'MTY70_PN00_WY21A_IPB10__my.png', variant: 'performance', wheels: '21"' },
+    'model_y_PX02_performance': { file: 'MTY70_PX02_WY21A_IPB10__my.png', variant: 'performance', wheels: '21"' },
+    'model_y_PPSB_performance': { file: 'MTY70_PPSB_WY21A_IPB10__my.png', variant: 'performance', wheels: '21"' },
+    'model_y_PN01_performance': { file: 'MTY70_PN01_WY21A_IPB10__my.png', variant: 'performance', wheels: '21"' },
+    // ── Cybertruck ──
+    'cybertruck_PPSW_standard': { file: 'MTC04_WH0B_IW04_APBS_APF2_CPF2_CYBR_PRS01_SC05_TW01__ct.png', variant: 'standard', wheels: 'Standard' },
+    // ── Cybercab ──
+    'cybercab_PPSW_standard': { file: 'cybercab.png', variant: 'standard', wheels: 'Standard' },
+};
+// Map user-friendly color keys to Tesla paint codes
+const COLOR_TO_PAINT_CODE = {
+    pearl_white: 'PPSW',
+    ultra_red: 'PR01',
+    quicksilver: 'PN00',
+    diamond_black: 'PX02',
+    deep_blue: 'PPSB',
+    stealth_grey: 'PN01',
+    solid_black: 'PX02',
+    midnight_silver: 'PN01',
+    red_multi_coat: 'PR01',
+    midnight_cherry: 'PR01',
+    ultra_white: 'PPSW',
+    lunar_silver: 'PN00',
+};
+function getVehicleImageFile(model, colorKey, variant = 'standard') {
+    const paintCode = COLOR_TO_PAINT_CODE[colorKey] || 'PPSW';
+    // Try exact match
+    const key = `${model}_${paintCode}_${variant}`;
+    if (IMAGE_MAP[key])
+        return IMAGE_MAP[key].file;
+    // Fallback: try standard variant
+    const stdKey = `${model}_${paintCode}_standard`;
+    if (IMAGE_MAP[stdKey])
+        return IMAGE_MAP[stdKey].file;
+    // Fallback: try pearl white in requested variant
+    const pwKey = `${model}_PPSW_${variant}`;
+    if (IMAGE_MAP[pwKey])
+        return IMAGE_MAP[pwKey].file;
+    // Final fallback: pearl white standard
+    const defaultKey = `${model}_PPSW_standard`;
+    return IMAGE_MAP[defaultKey]?.file || null;
+}
+// Returns color keys that have a real image for this model+variant
+const PAINT_CODE_TO_COLOR = {};
+// Build reverse map
+for (const [colorKey, paintCode] of Object.entries(COLOR_TO_PAINT_CODE)) {
+    // Keep first match only (avoid overwriting with fallback aliases)
+    if (!PAINT_CODE_TO_COLOR[paintCode]) {
+        PAINT_CODE_TO_COLOR[paintCode] = colorKey;
+    }
+}
+
+function hexToRgb(hex) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+}
+class TeslaVehicleRenderer extends i {
+    static get properties() {
+        return {
+            config: { type: Object },
+            state: { type: Object },
+        };
+    }
+    static get styles() {
+        return i$3 `
       :host { display: block; width: 100%; margin: 0 auto; }
 
       .scene {
@@ -123,11 +365,11 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
         aspect-ratio: 72 / 29;
         overflow: hidden;
         transform: scaleY(-1);
-        margin-top: -12%;
+        margin-top: -13.5%;
         position: relative;
         z-index: 0;
-        mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%);
-        -webkit-mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%);
+        mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.03) 60%);
+        -webkit-mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.03) 60%);
         opacity: 0.4;
         filter: blur(1px);
         pointer-events: none;
@@ -143,20 +385,109 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
         padding: 40px 0; text-align: center;
         color: rgba(255,255,255,0.3); font-size: 14px;
       }
-    `}render(){const e=this.config;if(!e)return z``;const t=function(e,t,i="standard"){const r=fe[t]||"PPSW",s=`${e}_${r}_${i}`;if(me[s])return me[s].file;const n=`${e}_${r}_standard`;if(me[n])return me[n].file;const a=`${e}_PPSW_${i}`;if(me[a])return me[a].file;const o=`${e}_PPSW_standard`;return me[o]?.file||null}(e.vehicle_model,e.paint_color,e.vehicle_variant||"standard");if(!t)return z`<div class="no-image">No vehicle image available</div>`;const i=`${e.image_path||"/local/community/ha-tesla-card/pictures"}/${t}`,r=this.state,s=r&&!r.is_online?"offline":"",n=ce[e.paint_color],a=n?function(e){const t=parseInt(e.replace("#",""),16);return`${t>>16&255},${t>>8&255},${255&t}`}(n.hex):"200,200,200";return z`
+    `;
+    }
+    render() {
+        const cfg = this.config;
+        if (!cfg)
+            return b ``;
+        const imageFile = getVehicleImageFile(cfg.vehicle_model, cfg.paint_color, cfg.vehicle_variant || 'standard');
+        if (!imageFile)
+            return b `<div class="no-image">No vehicle image available</div>`;
+        const basePath = cfg.image_path || '/local/community/ha-tesla-card/pictures';
+        const imgUrl = `${basePath}/${imageFile}`;
+        const s = this.state;
+        const imgClass = (s && !s.is_online) ? 'offline' : '';
+        const paint = PAINT_COLORS[cfg.paint_color];
+        const rgb = paint ? hexToRgb(paint.hex) : '200,200,200';
+        const ambientStyle = `background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(${rgb},0.10) 0%, rgba(${rgb},0.03) 50%, transparent 75%);`;
+        return b `
       <div class="scene">
-        <div class="ambient" style="${`background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(${a},0.10) 0%, rgba(${a},0.03) 50%, transparent 75%);`}"></div>
+        <div class="ambient" style="${ambientStyle}"></div>
         <div class="car-clip">
-          <img class="${s}" src="${i}" alt="" draggable="false" />
+          <img class="${imgClass}" src="${imgUrl}" alt="" draggable="false" />
         </div>
         <div class="car-reflect">
-          <img src="${i}" alt="" draggable="false" />
+          <img src="${imgUrl}" alt="" draggable="false" />
         </div>
       </div>
-    `}});const $e={en:{lock:"Lock",charge:"Charge",frunk:"Frunk",vent:"Vent",climate:"Climate",hr:"hr",min:"min",remaining:"remaining",calculating:"Calculating...",charge_limit:"Charge Limit",int:"in",ext:"out"},fr:{lock:"Verrouiller",charge:"Recharge",frunk:"Frunk",vent:"Aérer",climate:"Ventiler",hr:"h",min:"min",remaining:"restantes",calculating:"Calcul...",charge_limit:"Limite de charge",int:"int",ext:"ext"}};customElements.define("tesla-view-main",class extends ae{constructor(){super(...arguments),this._prevCharging=!1,this._lastChargeState=null,this._prevClimate=!1}static get properties(){return{hass:{attribute:!1},config:{attribute:!1},vehicleState:{attribute:!1},entityMap:{attribute:!1},_prevCharging:{state:!0},_lastChargeState:{state:!0},_prevClimate:{state:!0}}}render(){const e=this.vehicleState;if(!e)return z``;const t=e.is_charging;t&&(this._lastChargeState=e);const i=t?"cp cp-in":this._prevCharging?"cp cp-out":"cp cp-hidden";t!==this._prevCharging&&(this._prevCharging=t);const r=t?e:this._lastChargeState;return z`
+    `;
+    }
+}
+customElements.define('tesla-vehicle-renderer', TeslaVehicleRenderer);
+
+const i18n = {
+    en: {
+        lock: 'Lock',
+        charge: 'Charge',
+        frunk: 'Frunk',
+        trunk: 'Trunk',
+        vent: 'Vent',
+        climate: 'Climate',
+        hr: 'hr',
+        min: 'min',
+        remaining: 'remaining',
+        calculating: 'Calculating...',
+        charge_limit: 'Charge Limit',
+        int: 'in',
+        ext: 'out',
+    },
+    fr: {
+        lock: 'Verrouiller',
+        charge: 'Recharge',
+        frunk: 'Frunk',
+        trunk: 'Coffre',
+        vent: 'Aérer',
+        climate: 'Ventiler',
+        hr: 'h',
+        min: 'min',
+        remaining: 'restantes',
+        calculating: 'Calcul...',
+        charge_limit: 'Limite de charge',
+        int: 'int',
+        ext: 'ext',
+    },
+};
+function t(lang, key) {
+    const l = lang?.startsWith('fr') ? 'fr' : 'en';
+    return i18n[l]?.[key] ?? i18n['en'][key] ?? key;
+}
+class TeslaViewMain extends i {
+    constructor() {
+        super(...arguments);
+        this._prevCharging = false;
+        this._lastChargeState = null;
+        this._prevClimate = false;
+    }
+    static get properties() {
+        return {
+            hass: { attribute: false },
+            config: { attribute: false },
+            vehicleState: { attribute: false },
+            entityMap: { attribute: false },
+            _prevCharging: { state: true },
+            _lastChargeState: { state: true },
+            _prevClimate: { state: true },
+        };
+    }
+    render() {
+        const s = this.vehicleState;
+        if (!s)
+            return b ``;
+        const charging = s.is_charging;
+        if (charging) {
+            this._lastChargeState = s;
+        }
+        const cpClass = charging ? 'cp cp-in' : (this._prevCharging ? 'cp cp-out' : 'cp cp-hidden');
+        if (charging !== this._prevCharging) {
+            this._prevCharging = charging;
+        }
+        // Use last known charge state for the exit animation content
+        const cpState = charging ? s : this._lastChargeState;
+        return b `
       <div class="root">
-        <div class="${i}" @animationend=${this._onCpAnimEnd}>
-          ${r?this._renderChargeContent(r):""}
+        <div class="${cpClass}" @animationend=${this._onCpAnimEnd}>
+          ${cpState ? this._renderChargeContent(cpState) : ''}
         </div>
 
         <div class="car-wrap">
@@ -166,19 +497,47 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
           ></tesla-vehicle-renderer>
         </div>
 
-        ${this._renderClimatePanel(e)}
+        ${this._renderClimatePanel(s)}
 
         <div class="actions-zone">
           <div class="actions">
-          ${!1!==this.config.show_lock?this._act(e.is_locked,ye,be,this._t("lock"),()=>this._toggleLock()):""}
-          ${!1!==this.config.show_charge_port?this._act(e.charger_door_open,we,we,this._t("charge"),()=>this._toggleChargePort()):""}
-          ${!1!==this.config.show_frunk?this._act(e.frunk_open,Pe,Pe,this._t("frunk"),()=>this._openFrunk()):""}
-          ${!1!==this.config.show_vent?this._act(e.windows_open,Ae,Ae,this._t("vent"),()=>this._ventWindows()):""}
-          ${!1!==this.config.show_climate?this._act(e.is_climate_on,xe,xe,this._t("climate"),()=>this._toggleClimate()):""}
+          ${this.config.show_lock !== false ? this._act(s.is_locked, iconLock, iconUnlock, this._t('lock'), () => this._toggleLock()) : ''}
+          ${this.config.show_charge_port !== false ? this._act(s.charger_door_open, iconChargePort, iconChargePort, this._t('charge'), () => this._toggleChargePort()) : ''}
+          ${this.config.show_frunk !== false ? this._act(s.frunk_open, iconFrunk, iconFrunk, this._t('frunk'), () => this._openFrunk()) : ''}
+          ${this.config.show_vent !== false ? this._act(s.windows_open, iconVent, iconVent, this._t('vent'), () => this._ventWindows()) : ''}
+          ${this.config.show_trunk !== false ? this._act(s.trunk_open, iconTrunk, iconTrunk, this._t('trunk'), () => this._toggleTrunk()) : ''}
+          ${this.config.show_climate !== false ? this._act(s.is_climate_on, iconClimate, iconClimate, this._t('climate'), () => this._toggleClimate()) : ''}
           </div>
         </div>
       </div>
-    `}_onCpAnimEnd(e){if("cp-slide-out"===e.animationName){const t=e.currentTarget;t.classList.add("cp-hidden"),t.classList.remove("cp-out")}}_renderChargeContent(e){const t=e.time_to_full_charge;let i="";if(null!==t&&t>0){const e=Math.floor(t),r=Math.round(60*(t-e)),s=this._t("hr"),n=this._t("min"),a=this._t("remaining");i=e>0&&r>0?`${e} ${s} ${r} ${n} ${a}`:e>0?`${e} ${s} ${a}`:`${r} ${n} ${a}`}else i=this._t("calculating");const r="mi"===e.range_unit?"mi/hr":"km/hr";return z`
+    `;
+    }
+    _onCpAnimEnd(e) {
+        if (e.animationName === 'cp-slide-out') {
+            const el = e.currentTarget;
+            el.classList.add('cp-hidden');
+            el.classList.remove('cp-out');
+        }
+    }
+    _renderChargeContent(s) {
+        const t = s.time_to_full_charge;
+        let timeStr = '';
+        if (t !== null && t > 0) {
+            const h = Math.floor(t);
+            const m = Math.round((t - h) * 60);
+            const hr = this._t('hr'), mn = this._t('min'), rem = this._t('remaining');
+            if (h > 0 && m > 0)
+                timeStr = `${h} ${hr} ${m} ${mn} ${rem}`;
+            else if (h > 0)
+                timeStr = `${h} ${hr} ${rem}`;
+            else
+                timeStr = `${m} ${mn} ${rem}`;
+        }
+        else {
+            timeStr = this._t('calculating');
+        }
+        const ru = s.range_unit === 'mi' ? 'mi/hr' : 'km/hr';
+        return b `
       <div class="cp-bar"><div class="cp-bar-pulse"></div></div>
       <div class="cp-inner">
         <div class="cp-bolt">
@@ -186,38 +545,74 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
             <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66l.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
           </svg>
         </div>
-        <div class="cp-time">${i}</div>
-        <div class="cp-limit">${this._t("charge_limit")}: ${e.charge_limit??80}%</div>
+        <div class="cp-time">${timeStr}</div>
+        <div class="cp-limit">${this._t('charge_limit')}: ${s.charge_limit ?? 80}%</div>
         <div class="cp-sep"></div>
-        <div class="cp-stat">${e.charging_power??"--"} kW</div>
-        <div class="cp-stat">${null!==e.charge_rate?Math.round(e.charge_rate):"--"} ${r}</div>
-        <div class="cp-stat">+${e.charge_energy_added??"--"} kWh</div>
-        <div class="cp-stat">${e.charge_current??"--"}/${e.charge_current??"--"} A</div>
-        <div class="cp-stat">${e.charger_voltage??"--"} V</div>
+        <div class="cp-stat">${s.charging_power ?? '--'} kW</div>
+        <div class="cp-stat">${s.charge_rate !== null ? Math.round(s.charge_rate) : '--'} ${ru}</div>
+        <div class="cp-stat">+${s.charge_energy_added ?? '--'} kWh</div>
+        <div class="cp-stat">${s.charge_current ?? '--'}/${s.charge_current ?? '--'} A</div>
+        <div class="cp-stat">${s.charger_voltage ?? '--'} V</div>
       </div>
-    `}_act(e,t,i,r,s){return z`
-      <button class="act ${e?"on":""}" @click=${s}>
-        ${e?t:i}
-        <span class="act-label">${r}</span>
-      </button>`}_renderClimatePanel(e){const t=e.is_climate_on,i=t?"cl cl-in":this._prevClimate?"cl cl-out":"cl cl-hidden";return t!==this._prevClimate&&(this._prevClimate=t),z`
-      <div class="${i}" @animationend=${this._onClAnimEnd}>
-        ${this._renderClimateContent(e)}
+    `;
+    }
+    _act(active, iconOn, iconOff, label, fn) {
+        return b `
+      <button class="act ${active ? 'on' : ''}" @click=${fn}>
+        ${active ? iconOn : iconOff}
+        <span class="act-label">${label}</span>
+      </button>`;
+    }
+    _renderClimatePanel(s) {
+        const climateOn = s.is_climate_on;
+        const clClass = climateOn ? 'cl cl-in' : (this._prevClimate ? 'cl cl-out' : 'cl cl-hidden');
+        if (climateOn !== this._prevClimate) {
+            this._prevClimate = climateOn;
+        }
+        return b `
+      <div class="${clClass}" @animationend=${this._onClAnimEnd}>
+        ${this._renderClimateContent(s)}
       </div>
-    `}_onClAnimEnd(e){if("cl-slide-out"===e.animationName){const t=e.currentTarget;t.classList.add("cl-hidden"),t.classList.remove("cl-out")}}_renderClimateContent(e){const t=e.climate_target_temp??20,i=e.inside_temp,r=e.outside_temp;return z`
+    `;
+    }
+    _onClAnimEnd(e) {
+        if (e.animationName === 'cl-slide-out') {
+            const el = e.currentTarget;
+            el.classList.add('cl-hidden');
+            el.classList.remove('cl-out');
+        }
+    }
+    _renderClimateContent(s) {
+        const target = s.climate_target_temp ?? 20;
+        const inside = s.inside_temp;
+        const outside = s.outside_temp;
+        return b `
       <div class="cl-inner">
         <button class="cl-btn" @click=${this._tempUp}>
           <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M8.12 14.71L12 10.83l3.88 3.88a.996.996 0 1 0 1.41-1.41L12.7 8.71a.996.996 0 0 0-1.41 0L6.7 13.3a.996.996 0 0 0 0 1.41c.39.38 1.03.39 1.42 0"/></svg>
         </button>
-        <div class="cl-target">${t}°</div>
+        <div class="cl-target">${target}°</div>
         <button class="cl-btn" @click=${this._tempDown}>
           <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M8.12 9.29L12 13.17l3.88-3.88a.996.996 0 1 1 1.41 1.41l-4.59 4.59a.996.996 0 0 1-1.41 0L6.7 10.7a.996.996 0 0 1 0-1.41c.39-.38 1.03-.39 1.42 0"/></svg>
         </button>
         <div class="cl-temps">
-          ${null!==i?z`<span>${i}° ${this._t("int")}</span>`:""}
-          ${null!==r?z`<span>${r}° ${this._t("ext")}</span>`:""}
+          ${inside !== null ? b `<span>${inside}° ${this._t('int')}</span>` : ''}
+          ${outside !== null ? b `<span>${outside}° ${this._t('ext')}</span>` : ''}
         </div>
       </div>
-    `}_t(e){return function(e,t){const i=e?.startsWith("fr")?"fr":"en";return $e[i]?.[t]??$e.en[t]??t}(this.hass?.language||"en",e)}_toggleLock(){this.hass?.callService("lock",this.vehicleState.is_locked?"unlock":"lock",{entity_id:this.entityMap.door_lock})}_toggleClimate(){this.hass?.callService("climate",this.vehicleState.is_climate_on?"turn_off":"turn_on",{entity_id:this.entityMap.climate})}_ventWindows(){this.hass?.callService("cover",this.vehicleState.windows_open?"close_cover":"open_cover",{entity_id:this.entityMap.windows})}_toggleChargePort(){this.hass?.callService("cover",this.vehicleState.charger_door_open?"close_cover":"open_cover",{entity_id:this.entityMap.charger_door})}_openFrunk(){this.hass?.callService("cover","open_cover",{entity_id:this.entityMap.frunk})}_tempUp(){const e=this.vehicleState.climate_target_temp??20;this.hass?.callService("climate","set_temperature",{entity_id:this.entityMap.climate,temperature:Math.min(30,e+.5)})}_tempDown(){const e=this.vehicleState.climate_target_temp??20;this.hass?.callService("climate","set_temperature",{entity_id:this.entityMap.climate,temperature:Math.max(15,e-.5)})}static get styles(){return n`
+    `;
+    }
+    _t(key) { return t(this.hass?.language || 'en', key); }
+    _toggleLock() { this.hass?.callService('lock', this.vehicleState.is_locked ? 'unlock' : 'lock', { entity_id: this.entityMap.door_lock }); }
+    _toggleClimate() { this.hass?.callService('climate', this.vehicleState.is_climate_on ? 'turn_off' : 'turn_on', { entity_id: this.entityMap.climate }); }
+    _ventWindows() { this.hass?.callService('cover', this.vehicleState.windows_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.windows }); }
+    _toggleChargePort() { this.hass?.callService('cover', this.vehicleState.charger_door_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.charger_door }); }
+    _openFrunk() { this.hass?.callService('cover', 'open_cover', { entity_id: this.entityMap.frunk }); }
+    _toggleTrunk() { this.hass?.callService('cover', this.vehicleState.trunk_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.trunk }); }
+    _tempUp() { const t = this.vehicleState.climate_target_temp ?? 20; this.hass?.callService('climate', 'set_temperature', { entity_id: this.entityMap.climate, temperature: Math.min(30, t + 0.5) }); }
+    _tempDown() { const t = this.vehicleState.climate_target_temp ?? 20; this.hass?.callService('climate', 'set_temperature', { entity_id: this.entityMap.climate, temperature: Math.max(15, t - 0.5) }); }
+    static get styles() {
+        return i$3 `
       :host {
         display: block;
         font-family: -apple-system,BlinkMacSystemFont,"Inter Variable",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -232,7 +627,7 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
       .cp {
         position: absolute;
         top: -30px;
-        left: -18px;
+        left: 0;
         bottom: 0;
         z-index: 5;
         display: flex;
@@ -389,7 +784,7 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
          ════════════════════════════════ */
       .cl {
         position: absolute;
-        right: -19px;
+        right: -3px;
         top: 0;
         bottom: 50px;
         display: flex;
@@ -473,24 +868,86 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
         color: rgba(255,255,255,0.25);
         line-height: 1.5;
       }
-    `}});const ye=z`<svg viewBox="24 13 55 67" fill="none"><path fill-rule="evenodd" d="M50.99 77.50Q57.83 77.51 64.65 77.48Q70.63 77.45 72.13 76.54Q75.34 74.60 75.50 69.97Q75.51 69.54 75.53 49.12Q75.53 44.58 74.78 42.99C73.19 39.67 71.02 39.64 67.91 38.89A0.67 0.67 0 0 1 67.40 38.23Q67.40 35.66 67.39 32.00C67.36 22.81 60.29 15.63 51.01 15.62C41.74 15.62 34.65 22.80 34.62 31.99Q34.61 35.65 34.60 38.22A0.67 0.67 0 0 1 34.09 38.88C30.98 39.63 28.81 39.65 27.22 42.97Q26.47 44.56 26.47 49.10Q26.47 69.52 26.48 69.95Q26.64 74.58 29.85 76.52Q31.35 77.44 37.32 77.47Q44.15 77.50 50.99 77.50ZM39.95 39.00L62.05 39.00A0.57 0.57 0 0 0 62.62 38.43L62.62 32.80A12.30 11.49 90 0 0 51.13 20.50L50.87 20.50A12.30 11.49-90 0 0 39.38 32.80L39.38 38.43A0.57 0.57 0 0 0 39.95 39.00Z" fill="currentColor"/></svg>`,be=z`<svg viewBox="9 8 70 72" fill="none"><path d="M40.40 38.59Q40.36 34.85 40.40 30.78C40.59 12.29 14.89 9.87 11.12 28.42Q10.72 30.40 11.06 39.05A2.32 2.32 0 0 0 13.48 41.28L13.62 41.27A2.49 2.47-0.7 0 0 16.00 38.84C16.11 32.12 14.37 23.96 22.61 21.05C29.36 18.67 35.69 23.94 35.58 31.01C35.55 33.00 35.62 35.47 35.64 38.32A0.61 0.61 0 0 1 35.06 38.93C28.68 39.34 27.42 43.04 27.45 49.16Q27.53 65.87 27.49 69.49Q27.43 74.12 30.42 76.22Q32.31 77.55 37.81 77.54Q67.64 77.47 69.25 77.49C75.03 77.57 76.72 72.91 76.54 67.41Q76.48 65.49 76.49 46.01C76.50 40.38 71.80 38.79 66.45 38.97Q65.09 39.02 40.79 38.98A0.39 0.39 0 0 1 40.40 38.59Z" fill="currentColor"/></svg>`,Ae=z`<svg viewBox="50 18 68 68" fill="none"><path fill-rule="evenodd" d="M111.27 78.92Q109.11 81.07 106.78 81.13Q95.78 81.41 65.02 81.23C59.91 81.20 56.97 80.63 54.89 76.43Q54.16 74.97 54.19 71.59Q54.24 66.54 54.30 49.50Q54.32 44.66 57.67 41.19Q61.57 37.15 63.93 34.86Q64.80 34.02 65.67 33.15Q66.55 32.28 67.39 31.41Q69.69 29.06 73.75 25.18Q77.23 21.84 82.07 21.84Q99.11 21.85 104.16 21.82Q107.54 21.80 109.00 22.54C113.19 24.63 113.75 27.58 113.76 32.69Q113.82 63.45 113.49 74.45Q113.43 76.78 111.27 78.92ZM83.75 27.99C81.05 28.02 79.19 28.89 76.51 31.54Q69.41 38.56 63.00 45.00Q61.41 46.60 60.75 47.69A0.52 0.51-74.3 0 0 61.18 48.47L67.86 48.47A2.12 2.10-67.3 0 0 69.35 47.85L80.69 36.52A5.50 5.45-67.4 0 1 84.57 34.90L106.11 34.90A1.35 1.34 0 0 0 107.46 33.56L107.46 29.95A1.95 1.95 0 0 0 105.53 28.00Q93.62 27.86 83.75 27.99ZM107.26 54.95L60.62 54.87A0.23 0.23 0 0 0 60.39 55.10L60.36 72.14A3.11 2.81 0.1 0 0 63.46 74.95L104.34 75.03A3.11 2.81 0.1 0 0 107.46 72.22L107.49 55.18A0.23 0.23 0 0 0 107.26 54.95Z" fill="currentColor"/></svg>`,we=z`<svg viewBox="26 16 52 74" fill="none"><path d="M51.01 87.78A1.18 1.18 0 0 1 50.37 86.73L50.37 60.48A1.13 1.12 0 0 0 49.24 59.36L29.66 59.36A1.29 1.29 0 0 1 28.55 57.42Q45.62 28.22 50.98 19.00Q51.34 18.39 51.62 18.22A1.33 1.33 0 0 1 53.64 19.35Q53.64 40.75 53.65 45.40A1.25 1.25 0 0 0 54.90 46.65L74.31 46.65A1.33 1.32 15.1 0 1 75.46 48.64Q55.89 82.01 53.16 86.88Q52.29 88.43 51.01 87.78Z" fill="currentColor"/></svg>`,Pe=z`<svg viewBox="14 17 76 72" fill="none"><path fill-rule="evenodd" d="M57.79 39.34Q38.56 39.68 21.86 47.46C19.22 48.69 17.23 50.25 17.07 53.04Q16.93 55.37 17.03 68.26C17.07 73.04 20.96 75.04 25.71 75.29Q26.41 75.32 32.58 75.95A1.66 1.64 74.8 0 1 33.77 76.64C40.31 85.79 52.81 85.66 59.62 76.85A0.88 0.87 18.1 0 1 60.32 76.50L83.64 76.50A3.20 3.20 0 0 0 86.84 73.30L86.84 72.83A3.33 3.33 0 0 0 83.51 69.50L63.06 69.50A0.57 0.57 0 0 1 62.49 68.91Q62.68 60.78 56.96 55.79C53.25 52.55 47.23 51.07 42.75 52.52Q31.34 56.18 30.93 68.49A0.25 0.25 0 0 1 30.65 68.73L24.34 68.12A0.37 0.37 0 0 1 24.00 67.75L24.00 54.81A1.05 1.04-12.4 0 1 24.61 53.86Q44.11 44.94 64.71 46.71A5.57 5.52 34.1 0 0 67.63 46.16L85.07 37.63A3.41 3.41 0 0 0 86.67 33.15L86.62 33.04A3.44 3.43 64.9 0 0 81.97 31.35L68.32 38.05A0.92 0.91 53.8 0 1 67.27 37.88Q52.58 23.40 30.83 19.69A3.40 3.40 0 0 0 26.91 22.47L26.87 22.69A3.44 3.44 0 0 0 29.73 26.66Q45.63 29.14 57.95 38.87A0.26 0.26 0 0 1 57.79 39.34ZM55.47 67.75A8.72 8.72 0 0 0 46.75 59.03A8.72 8.72 0 0 0 38.03 67.75A8.72 8.72 0 0 0 46.75 76.47A8.72 8.72 0 0 0 55.47 67.75Z" fill="currentColor"/></svg>`,xe=z`<svg viewBox="16 13 76 76" fill="none"><path d="M52.27 46.50L52.23 18.72A2.65 2.65 0 0 0 49.57 16.08L49.36 16.08A16.43 16.36 89.9 0 0 33.03 32.54L33.03 32.76A16.43 16.36 89.9 0 0 49.42 49.16L49.63 49.16A2.65 2.65 0 0 0 52.27 46.50Z" fill="currentColor"/><path d="M58.37 49.25L86.39 49.25A2.53 2.53 0 0 0 88.92 46.72L88.92 46.39A16.42 16.36 0 0 0 72.50 30.03L72.26 30.03A16.42 16.36 0 0 0 55.84 46.39L55.84 46.72A2.53 2.53 0 0 0 58.37 49.25Z" fill="currentColor"/><path d="M49.55 52.72L21.69 52.76A2.62 2.62 0 0 0 19.08 55.39L19.08 55.62A16.44 16.37-0.1 0 0 35.55 71.96L35.77 71.96A16.44 16.37-0.1 0 0 52.18 55.56L52.18 55.33A2.62 2.62 0 0 0 49.55 52.72Z" fill="currentColor"/><path d="M55.72 55.36L55.76 83.38A2.53 2.53 0 0 0 58.30 85.90L58.62 85.90A16.44 16.37 89.9 0 0 74.96 69.43L74.96 69.23A16.44 16.37 89.9 0 0 58.56 52.82L58.24 52.82A2.53 2.53 0 0 0 55.72 55.36Z" fill="currentColor"/></svg>`;class Ce extends ae{constructor(){super(...arguments),this._showRange=!1}static get properties(){return{hass:{attribute:!1},_config:{state:!0},_vehicleState:{state:!0},_entityMap:{state:!0},_showRange:{state:!0}}}setConfig(e){if(!e.entity_prefix)throw new Error("Please define entity_prefix");var t;this._config={...he,...e},this._entityMap={climate:`climate.${t=this._config.entity_prefix}_climate`,door_lock:`lock.${t}_door_lock`,charge_cable_lock:`lock.${t}_charge_cable_lock`,frunk:`cover.${t}_frunk`,trunk:`cover.${t}_trunk`,charger_door:`cover.${t}_charger_door`,windows:`cover.${t}_windows`,charging:`switch.${t}_charging`,sentry_mode:`switch.${t}_sentry_mode`,defrost:`switch.${t}_defrost`,battery_level:`sensor.${t}_battery_level`,battery_range:`sensor.${t}_battery_range`,inside_temperature:`sensor.${t}_inside_temperature`,outside_temperature:`sensor.${t}_outside_temperature`,odometer:`sensor.${t}_odometer`,charging_power:`sensor.${t}_charging_power`,charge_rate:`sensor.${t}_charge_rate`,charge_energy_added:`sensor.${t}_charge_energy_added`,charger_voltage:`sensor.${t}_charger_voltage`,charger_current:`sensor.${t}_charger_current`,time_to_full_charge:`sensor.${t}_time_to_full_charge`,is_charging:`binary_sensor.${t}_charging`,is_online:`binary_sensor.${t}_online`,user_present:`binary_sensor.${t}_user_present`,honk_horn:`button.${t}_honk_horn`,flash_lights:`button.${t}_flash_lights`,wake:`button.${t}_wake`,charge_limit:`number.${t}_charge_limit`,charge_current_number:`number.${t}_charging_amps`,location:`device_tracker.${t}_location`,seat_heater_front_left:`select.${t}_seat_heater_front_left`,seat_heater_front_right:`select.${t}_seat_heater_front_right`,seat_heater_rear_left:`select.${t}_seat_heater_rear_left`,seat_heater_rear_right:`select.${t}_seat_heater_rear_right`,steering_wheel_heater:`switch.${t}_steering_wheel_heater`,firmware:`update.${t}_firmware`}}set hass(e){const t=this.__hass;this.__hass=e,e&&this._entityMap&&(this._vehicleState=function(e,t){const i=_e(e,t.climate);_e(e,t.battery_level);const r=_e(e,t.battery_range),s=_e(e,t.inside_temperature),n=_e(e,t.odometer),a=_e(e,t.location),o=_e(e,t.firmware);return{battery_level:de(e,t.battery_level),battery_range:de(e,t.battery_range),range_unit:r?.attributes?.unit_of_measurement||"km",is_locked:"locked"===_e(e,t.door_lock)?.state,is_charging:pe(e,t.is_charging)||pe(e,t.charging),is_online:pe(e,t.is_online),is_climate_on:"off"!==i?.state&&"unavailable"!==i?.state&&void 0!==i?.state,climate_target_temp:i?.attributes?.temperature??null,climate_current_temp:i?.attributes?.current_temperature??null,climate_hvac_mode:i?.state||"off",inside_temp:de(e,t.inside_temperature),outside_temp:de(e,t.outside_temperature),temp_unit:s?.attributes?.unit_of_measurement||"°C",charge_limit:de(e,t.charge_limit),charge_current:de(e,t.charge_current_number),charging_power:de(e,t.charging_power),charge_rate:de(e,t.charge_rate),charge_energy_added:de(e,t.charge_energy_added),charger_voltage:de(e,t.charger_voltage),time_to_full_charge:de(e,t.time_to_full_charge),odometer:de(e,t.odometer),odometer_unit:n?.attributes?.unit_of_measurement||"km",sentry_mode:pe(e,t.sentry_mode),defrost_on:pe(e,t.defrost),frunk_open:ge(e,t.frunk),trunk_open:ge(e,t.trunk),charger_door_open:ge(e,t.charger_door),windows_open:ge(e,t.windows),firmware_version:o?.attributes?.installed_version??null,firmware_update_available:"on"===o?.state,seat_heater_front_left:_e(e,t.seat_heater_front_left)?.state||"off",seat_heater_front_right:_e(e,t.seat_heater_front_right)?.state||"off",seat_heater_rear_left:_e(e,t.seat_heater_rear_left)?.state||"off",seat_heater_rear_right:_e(e,t.seat_heater_rear_right)?.state||"off",steering_wheel_heater:pe(e,t.steering_wheel_heater),user_present:pe(e,t.user_present),latitude:a?.attributes?.latitude??null,longitude:a?.attributes?.longitude??null}}(e,this._entityMap)),this.requestUpdate("hass",t)}get hass(){return this.__hass}render(){if(!this._config||!this.hass)return z`<ha-card><div style="padding:16px">Loading...</div></ha-card>`;const e=this._vehicleState?.battery_level??0,t=this._vehicleState?.is_charging??!1,i=t||e>50?"#30D158":e>20?"#FF9F0A":"#FF3B30",r=this._showRange?`${null!==this._vehicleState?.battery_range?Math.round(this._vehicleState.battery_range):"--"} ${this._vehicleState?.range_unit||"km"}`:`${this._vehicleState?.battery_level??"--"}%`;return z`
+    `;
+    }
+}
+customElements.define('tesla-view-main', TeslaViewMain);
+// Lock (Tesla official)
+const iconLock = b `<svg viewBox="24 13 55 67" fill="none"><path fill-rule="evenodd" d="M50.99 77.50Q57.83 77.51 64.65 77.48Q70.63 77.45 72.13 76.54Q75.34 74.60 75.50 69.97Q75.51 69.54 75.53 49.12Q75.53 44.58 74.78 42.99C73.19 39.67 71.02 39.64 67.91 38.89A0.67 0.67 0 0 1 67.40 38.23Q67.40 35.66 67.39 32.00C67.36 22.81 60.29 15.63 51.01 15.62C41.74 15.62 34.65 22.80 34.62 31.99Q34.61 35.65 34.60 38.22A0.67 0.67 0 0 1 34.09 38.88C30.98 39.63 28.81 39.65 27.22 42.97Q26.47 44.56 26.47 49.10Q26.47 69.52 26.48 69.95Q26.64 74.58 29.85 76.52Q31.35 77.44 37.32 77.47Q44.15 77.50 50.99 77.50ZM39.95 39.00L62.05 39.00A0.57 0.57 0 0 0 62.62 38.43L62.62 32.80A12.30 11.49 90 0 0 51.13 20.50L50.87 20.50A12.30 11.49-90 0 0 39.38 32.80L39.38 38.43A0.57 0.57 0 0 0 39.95 39.00Z" fill="currentColor"/></svg>`;
+// Unlock (Tesla official)
+const iconUnlock = b `<svg viewBox="9 8 70 72" fill="none"><path d="M40.40 38.59Q40.36 34.85 40.40 30.78C40.59 12.29 14.89 9.87 11.12 28.42Q10.72 30.40 11.06 39.05A2.32 2.32 0 0 0 13.48 41.28L13.62 41.27A2.49 2.47-0.7 0 0 16.00 38.84C16.11 32.12 14.37 23.96 22.61 21.05C29.36 18.67 35.69 23.94 35.58 31.01C35.55 33.00 35.62 35.47 35.64 38.32A0.61 0.61 0 0 1 35.06 38.93C28.68 39.34 27.42 43.04 27.45 49.16Q27.53 65.87 27.49 69.49Q27.43 74.12 30.42 76.22Q32.31 77.55 37.81 77.54Q67.64 77.47 69.25 77.49C75.03 77.57 76.72 72.91 76.54 67.41Q76.48 65.49 76.49 46.01C76.50 40.38 71.80 38.79 66.45 38.97Q65.09 39.02 40.79 38.98A0.39 0.39 0 0 1 40.40 38.59Z" fill="currentColor"/></svg>`;
+// Vent / window (Tesla official)
+const iconVent = b `<svg viewBox="50 18 68 68" fill="none"><path fill-rule="evenodd" d="M111.27 78.92Q109.11 81.07 106.78 81.13Q95.78 81.41 65.02 81.23C59.91 81.20 56.97 80.63 54.89 76.43Q54.16 74.97 54.19 71.59Q54.24 66.54 54.30 49.50Q54.32 44.66 57.67 41.19Q61.57 37.15 63.93 34.86Q64.80 34.02 65.67 33.15Q66.55 32.28 67.39 31.41Q69.69 29.06 73.75 25.18Q77.23 21.84 82.07 21.84Q99.11 21.85 104.16 21.82Q107.54 21.80 109.00 22.54C113.19 24.63 113.75 27.58 113.76 32.69Q113.82 63.45 113.49 74.45Q113.43 76.78 111.27 78.92ZM83.75 27.99C81.05 28.02 79.19 28.89 76.51 31.54Q69.41 38.56 63.00 45.00Q61.41 46.60 60.75 47.69A0.52 0.51-74.3 0 0 61.18 48.47L67.86 48.47A2.12 2.10-67.3 0 0 69.35 47.85L80.69 36.52A5.50 5.45-67.4 0 1 84.57 34.90L106.11 34.90A1.35 1.34 0 0 0 107.46 33.56L107.46 29.95A1.95 1.95 0 0 0 105.53 28.00Q93.62 27.86 83.75 27.99ZM107.26 54.95L60.62 54.87A0.23 0.23 0 0 0 60.39 55.10L60.36 72.14A3.11 2.81 0.1 0 0 63.46 74.95L104.34 75.03A3.11 2.81 0.1 0 0 107.46 72.22L107.49 55.18A0.23 0.23 0 0 0 107.26 54.95Z" fill="currentColor"/></svg>`;
+// Charge port (Tesla official)
+const iconChargePort = b `<svg viewBox="26 16 52 74" fill="none"><path d="M51.01 87.78A1.18 1.18 0 0 1 50.37 86.73L50.37 60.48A1.13 1.12 0 0 0 49.24 59.36L29.66 59.36A1.29 1.29 0 0 1 28.55 57.42Q45.62 28.22 50.98 19.00Q51.34 18.39 51.62 18.22A1.33 1.33 0 0 1 53.64 19.35Q53.64 40.75 53.65 45.40A1.25 1.25 0 0 0 54.90 46.65L74.31 46.65A1.33 1.32 15.1 0 1 75.46 48.64Q55.89 82.01 53.16 86.88Q52.29 88.43 51.01 87.78Z" fill="currentColor"/></svg>`;
+// Frunk (Tesla official)
+// Frunk (Tesla official)
+const iconFrunk = b `<svg viewBox="14 17 76 72" fill="none"><path fill-rule="evenodd" d="M57.79 39.34Q38.56 39.68 21.86 47.46C19.22 48.69 17.23 50.25 17.07 53.04Q16.93 55.37 17.03 68.26C17.07 73.04 20.96 75.04 25.71 75.29Q26.41 75.32 32.58 75.95A1.66 1.64 74.8 0 1 33.77 76.64C40.31 85.79 52.81 85.66 59.62 76.85A0.88 0.87 18.1 0 1 60.32 76.50L83.64 76.50A3.20 3.20 0 0 0 86.84 73.30L86.84 72.83A3.33 3.33 0 0 0 83.51 69.50L63.06 69.50A0.57 0.57 0 0 1 62.49 68.91Q62.68 60.78 56.96 55.79C53.25 52.55 47.23 51.07 42.75 52.52Q31.34 56.18 30.93 68.49A0.25 0.25 0 0 1 30.65 68.73L24.34 68.12A0.37 0.37 0 0 1 24.00 67.75L24.00 54.81A1.05 1.04-12.4 0 1 24.61 53.86Q44.11 44.94 64.71 46.71A5.57 5.52 34.1 0 0 67.63 46.16L85.07 37.63A3.41 3.41 0 0 0 86.67 33.15L86.62 33.04A3.44 3.43 64.9 0 0 81.97 31.35L68.32 38.05A0.92 0.91 53.8 0 1 67.27 37.88Q52.58 23.40 30.83 19.69A3.40 3.40 0 0 0 26.91 22.47L26.87 22.69A3.44 3.44 0 0 0 29.73 26.66Q45.63 29.14 57.95 38.87A0.26 0.26 0 0 1 57.79 39.34ZM55.47 67.75A8.72 8.72 0 0 0 46.75 59.03A8.72 8.72 0 0 0 38.03 67.75A8.72 8.72 0 0 0 46.75 76.47A8.72 8.72 0 0 0 55.47 67.75Z" fill="currentColor"/></svg>`;
+// Trunk
+const iconTrunk = b `<svg viewBox="0 0 24 24"><path d="M21.548 13.363l-.248-.473l.013-1.291c.005-.206.27-.022.339-.215l.255-.891c.34-.635-.577-1.621-.912-1.557l-3.267-.687a11.4 11.4 0 0 1-1.768-.525l-.267-.1L17.986 5.3a.816.816 0 0 1 1.322.135l.307.377a1.115 1.115 0 0 0 1.582.148a.87.87 0 0 0 .078-1.254l-1.424-1.343a1.574 1.574 0 0 0-2.41 0l-3.67 3.514l-5.249-2.034a5.9 5.9 0 0 0-2.139-.4H3.046a1.046 1.046 0 0 0 0 2.092H6.1a5.4 5.4 0 0 1 1.932.365l7.121 2.758a13.5 13.5 0 0 0 2.035.608l.652.14c.7.152 1.844.126 1.5.759l-.229.436l.017 1.651l.566.993A1.1 1.1 0 0 1 20 15v.585a1.08 1.08 0 0 1-1.08 1.08h-1.152c.013-.129.028-.256.032-.387c0-.045.007-.088.007-.132a5.062 5.062 0 1 0-10.124 0v.085c0 .147.017.29.032.434H3.046a1.047 1.047 0 0 0 0 2.093h5.383a5.027 5.027 0 0 0 8.633 0h2.3c1.509 0 2.613-.681 2.613-2.189L22 14.325a1.8 1.8 0 0 0-.452-.962M10.2 16.238c0-.032-.01-.063-.01-.1a2.551 2.551 0 1 1 5.1 0c0 .041-.01.079-.012.12a2.5 2.5 0 0 1-.053.4a2.55 2.55 0 0 1-1.386 1.773a2.46 2.46 0 0 1-2.24-.023a2.57 2.57 0 0 1-1.4-2.173z" fill="currentColor"/></svg>`;
+// Climate / fan (Tesla official — 4 blades only)
+const iconClimate = b `<svg viewBox="16 13 76 76" fill="none"><path d="M52.27 46.50L52.23 18.72A2.65 2.65 0 0 0 49.57 16.08L49.36 16.08A16.43 16.36 89.9 0 0 33.03 32.54L33.03 32.76A16.43 16.36 89.9 0 0 49.42 49.16L49.63 49.16A2.65 2.65 0 0 0 52.27 46.50Z" fill="currentColor"/><path d="M58.37 49.25L86.39 49.25A2.53 2.53 0 0 0 88.92 46.72L88.92 46.39A16.42 16.36 0 0 0 72.50 30.03L72.26 30.03A16.42 16.36 0 0 0 55.84 46.39L55.84 46.72A2.53 2.53 0 0 0 58.37 49.25Z" fill="currentColor"/><path d="M49.55 52.72L21.69 52.76A2.62 2.62 0 0 0 19.08 55.39L19.08 55.62A16.44 16.37-0.1 0 0 35.55 71.96L35.77 71.96A16.44 16.37-0.1 0 0 52.18 55.56L52.18 55.33A2.62 2.62 0 0 0 49.55 52.72Z" fill="currentColor"/><path d="M55.72 55.36L55.76 83.38A2.53 2.53 0 0 0 58.30 85.90L58.62 85.90A16.44 16.37 89.9 0 0 74.96 69.43L74.96 69.23A16.44 16.37 89.9 0 0 58.56 52.82L58.24 52.82A2.53 2.53 0 0 0 55.72 55.36Z" fill="currentColor"/></svg>`;
+
+class TeslaCard extends i {
+    constructor() {
+        super(...arguments);
+        this._showRange = false;
+    }
+    static get properties() {
+        return {
+            hass: { attribute: false },
+            _config: { state: true },
+            _vehicleState: { state: true },
+            _entityMap: { state: true },
+            _showRange: { state: true },
+        };
+    }
+    setConfig(config) {
+        if (!config.entity_prefix) {
+            throw new Error('Please define entity_prefix');
+        }
+        this._config = { ...DEFAULT_CONFIG, ...config };
+        this._entityMap = buildEntityMap(this._config.entity_prefix);
+    }
+    set hass(hass) {
+        const oldHass = this.__hass;
+        this.__hass = hass;
+        if (hass && this._entityMap) {
+            this._vehicleState = extractVehicleState(hass, this._entityMap);
+        }
+        this.requestUpdate('hass', oldHass);
+    }
+    get hass() {
+        return this.__hass;
+    }
+    render() {
+        if (!this._config || !this.hass) {
+            return b `<ha-card><div style="padding:16px">Loading...</div></ha-card>`;
+        }
+        const battLevel = this._vehicleState?.battery_level ?? 0;
+        const battCharging = this._vehicleState?.is_charging ?? false;
+        const battColor = battCharging ? '#30D158' : battLevel > 50 ? '#30D158' : battLevel > 20 ? '#FF9F0A' : '#FF3B30';
+        const battText = this._showRange
+            ? `${this._vehicleState?.battery_range !== null ? Math.round(this._vehicleState.battery_range) : '--'} ${this._vehicleState?.range_unit || 'km'}`
+            : `${this._vehicleState?.battery_level ?? '--'}%`;
+        return b `
       <ha-card>
         <div class="card-container">
           <div class="card-header">
             <span class="battery-indicator" @click=${this._toggleBatteryDisplay}>
-              <span class="battery-pct">${r}</span>
+              <span class="battery-pct">${battText}</span>
               <svg class="battery-svg" viewBox="0 0 28 13" width="28" height="13">
                 <rect x="0" y="0" width="24" height="13" rx="2.5" ry="2.5"
                   fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
                 <rect x="24.5" y="3.5" width="2.5" height="6" rx="1" ry="1"
                   fill="rgba(255,255,255,0.35)"/>
                 <rect x="1.5" y="1.5"
-                  width="${Math.max(0,Math.min(21,e/100*21))}"
-                  height="10" rx="1.5" ry="1.5" fill="${i}"/>
-                ${t?z`
+                  width="${Math.max(0, Math.min(21, battLevel / 100 * 21))}"
+                  height="10" rx="1.5" ry="1.5" fill="${battColor}"/>
+                ${battCharging ? b `
                   <path d="M10 1.5 L7.5 6.5 L10 6.5 L8 11.5 L13.5 5.5 L10.5 5.5 L12.5 1.5 Z"
                     fill="white" opacity="0.9"/>
-                `:""}
+                ` : ''}
               </svg>
             </span>
           </div>
@@ -505,4 +962,37 @@ const A=globalThis,w=e=>e,P=A.trustedTypes,x=P?P.createPolicy("lit-html",{create
           </div>
         </div>
       </ha-card>
-    `}_toggleBatteryDisplay(){this._showRange=!this._showRange}getCardSize(){return 6}static getConfigElement(){return document.createElement("tesla-card-editor")}static getStubConfig(){return{type:"custom:tesla-card",entity_prefix:"my_tesla",vehicle_model:"model_3",paint_color:"pearl_white"}}static get styles(){return[ue]}}customElements.define("tesla-card",Ce),window.customCards=window.customCards||[],window.customCards.push({type:"tesla-card",name:"Tesla Card",description:`Tesla app-style vehicle card (v${le})`,preview:!0}),console.info(`%c TESLA-CARD %c v${le} `,"color: white; background: #e53935; font-weight: bold; padding: 2px 4px; border-radius: 3px 0 0 3px;","color: white; background: #333; font-weight: bold; padding: 2px 4px; border-radius: 0 3px 3px 0;");export{Ce as TeslaCard};
+    `;
+    }
+    _toggleBatteryDisplay() {
+        this._showRange = !this._showRange;
+    }
+    getCardSize() {
+        return 6;
+    }
+    static getConfigElement() {
+        return document.createElement('tesla-card-editor');
+    }
+    static getStubConfig() {
+        return {
+            type: 'custom:tesla-card',
+            entity_prefix: 'my_tesla',
+            vehicle_model: 'model_3',
+            paint_color: 'pearl_white',
+        };
+    }
+    static get styles() {
+        return [cardStyles];
+    }
+}
+customElements.define('tesla-card', TeslaCard);
+window.customCards = window.customCards || [];
+window.customCards.push({
+    type: 'tesla-card',
+    name: 'Tesla Card',
+    description: `Tesla app-style vehicle card (v${CARD_VERSION})`,
+    preview: true,
+});
+console.info(`%c TESLA-CARD %c v${CARD_VERSION} `, 'color: white; background: #e53935; font-weight: bold; padding: 2px 4px; border-radius: 3px 0 0 3px;', 'color: white; background: #333; font-weight: bold; padding: 2px 4px; border-radius: 0 3px 3px 0;');
+
+export { TeslaCard };

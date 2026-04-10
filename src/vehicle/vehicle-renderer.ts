@@ -60,11 +60,11 @@ class TeslaVehicleRenderer extends LitElement {
         aspect-ratio: 72 / 29;
         overflow: hidden;
         transform: scaleY(-1);
-        margin-top: -12%;
+        margin-top: -13.5%;
         position: relative;
         z-index: 0;
-        mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%);
-        -webkit-mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%);
+        mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.03) 60%);
+        -webkit-mask-image: linear-gradient(rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.03) 60%);
         opacity: 0.4;
         filter: blur(1px);
         pointer-events: none;

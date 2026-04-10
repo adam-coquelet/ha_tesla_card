@@ -83,6 +83,7 @@ class TeslaCardEditor extends LitElement {
           ${this._toggle('show_lock', 'Lock / Unlock')}
           ${this._toggle('show_charge_port', 'Charge Port')}
           ${this._toggle('show_frunk', 'Frunk')}
+          ${this._toggle('show_trunk', 'Trunk')}
           ${this._toggle('show_vent', 'Vent Windows')}
           ${this._toggle('show_climate', 'Climate')}
         </div>
