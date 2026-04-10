@@ -27,19 +27,6 @@ class TeslaCardEditor extends LitElement {
     ];
   }
 
-  private _buttonsSchema() {
-    return [
-      { type: 'grid' as const, schema: [
-        { name: 'show_lock', selector: { boolean: {} } },
-        { name: 'show_charge_port', selector: { boolean: {} } },
-        { name: 'show_frunk', selector: { boolean: {} } },
-        { name: 'show_trunk', selector: { boolean: {} } },
-        { name: 'show_vent', selector: { boolean: {} } },
-        { name: 'show_climate', selector: { boolean: {} } },
-      ]},
-    ];
-  }
-
   private _entitiesSchema() {
     return [
       { type: 'grid' as const, schema: [
@@ -134,7 +121,14 @@ class TeslaCardEditor extends LitElement {
         <ha-form .hass=${this.hass} .data=${this._config} .schema=${this._vehicleSchema()} .computeLabel=${label} @value-changed=${this._formChanged}></ha-form>
 
         <div class="section">Buttons</div>
-        <ha-form class="compact" .hass=${this.hass} .data=${this._config} .schema=${this._buttonsSchema()} .computeLabel=${label} @value-changed=${this._formChanged}></ha-form>
+        <div class="checks">
+          ${this._check('show_lock', 'Lock')}
+          ${this._check('show_charge_port', 'Charge Port')}
+          ${this._check('show_frunk', 'Frunk')}
+          ${this._check('show_trunk', 'Trunk')}
+          ${this._check('show_vent', 'Vent')}
+          ${this._check('show_climate', 'Climate')}
+        </div>
 
         <div class="section">Entities</div>
         <ha-form .hass=${this.hass} .data=${this._config} .schema=${this._entitiesSchema()} .computeLabel=${label} @value-changed=${this._formChanged}></ha-form>
@@ -153,6 +147,24 @@ class TeslaCardEditor extends LitElement {
     return available
       .filter(k => PAINT_COLORS[k])
       .map(k => [k, PAINT_COLORS[k]] as [string, { name: string; hex: string }]);
+  }
+
+  private _check(key: string, label: string) {
+    const on = (this._config as any)[key] !== false;
+    return html`
+      <label class="chk" @click=${() => { this._config = { ...this._config, [key]: !on }; this._fire(); }}>
+        <span>${label}</span>
+        <span class="chk-dot ${on ? 'on' : ''}"></span>
+      </label>
+    `;
+  }
+
+  private _fire() {
+    this.dispatchEvent(new CustomEvent('config-changed', {
+      detail: { config: this._config },
+      bubbles: true,
+      composed: true,
+    }));
   }
 
   private _formChanged(ev: CustomEvent) {
@@ -176,9 +188,36 @@ class TeslaCardEditor extends LitElement {
         border-bottom: 1px solid var(--divider-color, #e0e0e0);
       }
       .section:first-child { margin-top: 0; }
-      .compact ha-formfield {
-        min-height: 0 !important;
-        height: 36px;
+      .checks {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .chk {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: var(--card-background-color, #fff);
+        border: 1px solid var(--divider-color, #e0e0e0);
+        font-size: 13px;
+        color: var(--primary-text-color);
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .chk-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 2px solid var(--divider-color, #ccc);
+        transition: all 0.15s;
+        flex-shrink: 0;
+      }
+      .chk-dot.on {
+        background: var(--primary-color, #03a9f4);
+        border-color: var(--primary-color, #03a9f4);
       }
       ha-form { display: block; }
     `;
