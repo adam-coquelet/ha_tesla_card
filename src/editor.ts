@@ -21,7 +21,6 @@ class TeslaCardEditor extends LitElement {
   private _vehicleSchema() {
     const colors = this._getColors();
     return [
-      { name: 'entity_prefix', selector: { text: {} } },
       { name: 'vehicle_model', selector: { select: { options: Object.entries(VEHICLE_MODELS).map(([k, v]) => ({ value: k, label: v })), mode: 'dropdown' as const } } },
       { name: 'vehicle_variant', selector: { select: { options: Object.entries(VEHICLE_VARIANTS).map(([k, v]) => ({ value: k, label: v })), mode: 'dropdown' as const } } },
       { name: 'paint_color', selector: { select: { options: colors.map(([k, c]) => ({ value: k, label: c.name })), mode: 'dropdown' as const } } },

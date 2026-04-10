@@ -23,10 +23,7 @@ class TeslaCard extends LitElement {
   private _showRange: boolean = false;
 
   setConfig(config: TeslaCardConfig) {
-    if (!config.entity_prefix) {
-      throw new Error('Please define entity_prefix');
-    }
-    this._config = { ...DEFAULT_CONFIG, ...config };
+    this._config = { ...DEFAULT_CONFIG, ...config, entity_prefix: config.entity_prefix || 'tesla' };
     this._entityMap = buildEntityMap(this._config);
   }
 
