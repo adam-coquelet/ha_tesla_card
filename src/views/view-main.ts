@@ -96,8 +96,8 @@ class TeslaViewMain extends LitElement {
           ${this.config.show_lock !== false ? this._act(s.is_locked, iconLock, iconUnlock, this._t('lock'), () => this._toggleLock()) : ''}
           ${this.config.show_charge_port !== false ? this._act(s.charger_door_open, iconChargePort, iconChargePort, this._t('charge'), () => this._toggleChargePort()) : ''}
           ${this.config.show_frunk !== false ? this._act(s.frunk_open, iconFrunk, iconFrunk, this._t('frunk'), () => this._openFrunk()) : ''}
-          ${this.config.show_vent !== false ? this._act(s.windows_open, iconVent, iconVent, this._t('vent'), () => this._ventWindows()) : ''}
           ${this.config.show_trunk !== false ? this._act(s.trunk_open, iconTrunk, iconTrunk, this._t('trunk'), () => this._toggleTrunk()) : ''}
+          ${this.config.show_vent !== false ? this._act(s.windows_open, iconVent, iconVent, this._t('vent'), () => this._ventWindows()) : ''}
           ${this.config.show_climate !== false ? this._act(s.is_climate_on, iconClimate, iconClimate, this._t('climate'), () => this._toggleClimate()) : ''}
           </div>
         </div>
