@@ -49,12 +49,16 @@ class TeslaViewMain extends LitElement {
           ></tesla-vehicle-renderer>
         </div>
 
-        <div class="actions">
+        ${s.is_climate_on ? this._renderClimateBar(s) : ''}
+
+        <div class="actions-zone">
+          <div class="actions">
           ${this._act(s.is_locked, iconLock, iconUnlock, 'Verrouiller', () => this._toggleLock())}
-          ${this._act(s.windows_open, iconVent, iconVent, 'Aérer', () => this._ventWindows())}
           ${this._act(s.charger_door_open, iconChargePort, iconChargePort, 'Recharge', () => this._toggleChargePort())}
           ${this._act(s.frunk_open, iconFrunk, iconFrunk, 'Frunk', () => this._openFrunk())}
+          ${this._act(s.windows_open, iconVent, iconVent, 'Aérer', () => this._ventWindows())}
           ${this._act(s.is_climate_on, iconClimate, iconClimate, 'Ventiler', () => this._toggleClimate())}
+          </div>
         </div>
       </div>
     `;
@@ -110,11 +114,36 @@ class TeslaViewMain extends LitElement {
       </button>`;
   }
 
+  private _renderClimateBar(s: TeslaVehicleState) {
+    const target = s.climate_target_temp ?? 20;
+    const inside = s.inside_temp;
+    const outside = s.outside_temp;
+    return html`
+      <div class="cl">
+        <div class="cl-inner">
+          <button class="cl-btn" @click=${this._tempUp}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE --><path fill="currentColor" d="M8.12 14.71L12 10.83l3.88 3.88a.996.996 0 1 0 1.41-1.41L12.7 8.71a.996.996 0 0 0-1.41 0L6.7 13.3a.996.996 0 0 0 0 1.41c.39.38 1.03.39 1.42 0"/></svg>
+          </button>
+          <div class="cl-target">${target}°</div>
+          <button class="cl-btn" @click=${this._tempDown}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE --><path fill="currentColor" d="M8.12 9.29L12 13.17l3.88-3.88a.996.996 0 1 1 1.41 1.41l-4.59 4.59a.996.996 0 0 1-1.41 0L6.7 10.7a.996.996 0 0 1 0-1.41c.39-.38 1.03-.39 1.42 0"/></svg>
+          </button>
+          <div class="cl-temps">
+            ${inside !== null ? html`<span>${inside}° int</span>` : ''}
+            ${outside !== null ? html`<span>${outside}° ext</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   private _toggleLock() { this.hass?.callService('lock', this.vehicleState.is_locked ? 'unlock' : 'lock', { entity_id: this.entityMap.door_lock }); }
   private _toggleClimate() { this.hass?.callService('climate', this.vehicleState.is_climate_on ? 'turn_off' : 'turn_on', { entity_id: this.entityMap.climate }); }
   private _ventWindows() { this.hass?.callService('cover', this.vehicleState.windows_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.windows }); }
   private _toggleChargePort() { this.hass?.callService('cover', this.vehicleState.charger_door_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.charger_door }); }
   private _openFrunk() { this.hass?.callService('cover', 'open_cover', { entity_id: this.entityMap.frunk }); }
+  private _tempUp() { const t = this.vehicleState.climate_target_temp ?? 20; this.hass?.callService('climate', 'set_temperature', { entity_id: this.entityMap.climate, temperature: Math.min(30, t + 0.5) }); }
+  private _tempDown() { const t = this.vehicleState.climate_target_temp ?? 20; this.hass?.callService('climate', 'set_temperature', { entity_id: this.entityMap.climate, temperature: Math.max(15, t - 0.5) }); }
 
   static get styles() {
     return css`
@@ -239,12 +268,16 @@ class TeslaViewMain extends LitElement {
       /* ════════════════════════════════
          ACTIONS — icon only, no bg, green when active
          ════════════════════════════════ */
+      .actions-zone {
+        position: relative;
+        z-index: 9;
+      }
+
       .actions {
         display: flex;
         justify-content: space-around;
         padding: 4px 8px 8px;
         position: relative;
-        z-index: 9;
       }
 
       .act {
@@ -278,6 +311,82 @@ class TeslaViewMain extends LitElement {
         font-weight: 500;
         letter-spacing: 0.2px;
         color: inherit;
+      }
+
+      /* ════════════════════════════════
+         CLIMATE PANEL — right side, mirrored from charge panel
+         ════════════════════════════════ */
+      .cl {
+        position: absolute;
+        right: -19px;
+        top: 0;
+        bottom: 50px;
+        display: flex;
+        align-items: center;
+        z-index: 5;
+        pointer-events: none;
+        background: linear-gradient(270deg, #1c1c1e, #1c1c1ecc 56%, #1c1c1e00);
+        animation: cl-slide-in 0.35s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+        padding-left: 48px;
+      }
+
+      @keyframes cl-slide-in {
+        from { transform: translateX(100%); opacity: 0; }
+        to   { transform: translateX(0); opacity: 1; }
+      }
+
+      .cl-inner {
+        padding: 12px 16px 8px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        pointer-events: auto;
+      }
+
+      .cl-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: none;
+        color: rgba(255,255,255,0.55);
+        font-size: 24px;
+        line-height: 1;
+        font-weight: 300;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+        -webkit-tap-highlight-color: transparent;
+        pointer-events: auto;
+        font-family: inherit;
+      }
+      .cl-btn:active { transform: scale(0.85); color: #4FC3F7; }
+
+      .cl-target {
+        font-size: 28px;
+        font-weight: 500;
+        color: #4FC3F7;
+        letter-spacing: -1px;
+        line-height: 1;
+        margin: 10px 0;
+        width: 56px;
+        text-align: center;
+      }
+
+      .cl-temps {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 6px;
+        gap: 1px;
+      }
+      .cl-temps span {
+        font-size: 10px;
+        font-weight: 400;
+        color: rgba(255,255,255,0.25);
+        line-height: 1.5;
       }
     `;
   }
