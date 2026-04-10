@@ -181,7 +181,7 @@ class TeslaViewMain extends LitElement {
          ══════════════════════════════════════════ */
       .cp {
         position: absolute;
-        top: -40px;
+        top: -30px;
         left: -18px;
         bottom: 0;
         z-index: 5;
