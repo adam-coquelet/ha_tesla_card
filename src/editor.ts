@@ -176,13 +176,9 @@ class TeslaCardEditor extends LitElement {
         border-bottom: 1px solid var(--divider-color, #e0e0e0);
       }
       .section:first-child { margin-top: 0; }
-      .compact {
-        --form-grid-row-gap: 0px;
-        --ha-form-grid-row-gap: 0px;
-      }
-      .compact ha-form-grid {
-        gap: 0 !important;
-        row-gap: 0 !important;
+      .compact ha-formfield {
+        min-height: 0 !important;
+        height: 36px;
       }
       ha-form { display: block; }
     `;
