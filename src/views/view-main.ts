@@ -9,6 +9,8 @@ class TeslaViewMain extends LitElement {
       config: { attribute: false },
       vehicleState: { attribute: false },
       entityMap: { attribute: false },
+      _prevCharging: { state: true },
+      _lastChargeState: { state: true },
     };
   }
 
@@ -16,14 +18,29 @@ class TeslaViewMain extends LitElement {
   config!: TeslaCardConfig;
   vehicleState!: TeslaVehicleState;
   entityMap!: TeslaEntityMap;
+  private _prevCharging: boolean = false;
+  private _lastChargeState: TeslaVehicleState | null = null;
 
   render() {
     const s = this.vehicleState;
     if (!s) return html``;
 
+    const charging = s.is_charging;
+    if (charging) {
+      this._lastChargeState = s;
+    }
+    const cpClass = charging ? 'cp cp-in' : (this._prevCharging ? 'cp cp-out' : 'cp cp-hidden');
+    if (charging !== this._prevCharging) {
+      this._prevCharging = charging;
+    }
+    // Use last known charge state for the exit animation content
+    const cpState = charging ? s : this._lastChargeState;
+
     return html`
       <div class="root">
-        ${s.is_charging ? this._renderChargePanel(s) : ''}
+        <div class="${cpClass}" @animationend=${this._onCpAnimEnd}>
+          ${cpState ? this._renderChargeContent(cpState) : ''}
+        </div>
 
         <div class="car-wrap">
           <tesla-vehicle-renderer
@@ -33,16 +50,25 @@ class TeslaViewMain extends LitElement {
         </div>
 
         <div class="actions">
-          ${this._pill(s.is_locked, s.is_locked ? 'Lock' : 'Unlock', s.is_locked ? iconLock : iconUnlock, () => this._toggleLock())}
-          ${this._pill(s.is_climate_on, 'Climate', iconClimate, () => this._toggleClimate())}
-          ${this._pill(false, 'Flash', iconFlash, () => this._flashLights())}
-          ${this._pill(s.sentry_mode, 'Sentry', iconSentry, () => this._toggleSentry())}
+          ${this._act(s.is_locked, iconLock, iconUnlock, 'Verrouiller', () => this._toggleLock())}
+          ${this._act(s.windows_open, iconVent, iconVent, 'Aérer', () => this._ventWindows())}
+          ${this._act(s.charger_door_open, iconChargePort, iconChargePort, 'Recharge', () => this._toggleChargePort())}
+          ${this._act(s.frunk_open, iconFrunk, iconFrunk, 'Frunk', () => this._openFrunk())}
+          ${this._act(s.is_climate_on, iconClimate, iconClimate, 'Ventiler', () => this._toggleClimate())}
         </div>
       </div>
     `;
   }
 
-  private _renderChargePanel(s: TeslaVehicleState) {
+  private _onCpAnimEnd(e: AnimationEvent) {
+    if (e.animationName === 'cp-slide-out') {
+      const el = e.currentTarget as HTMLElement;
+      el.classList.add('cp-hidden');
+      el.classList.remove('cp-out');
+    }
+  }
+
+  private _renderChargeContent(s: TeslaVehicleState) {
     const t = s.time_to_full_charge;
     let timeStr = '';
     if (t !== null && t > 0) {
@@ -57,35 +83,38 @@ class TeslaViewMain extends LitElement {
     const ru = s.range_unit === 'mi' ? 'mi/hr' : 'km/hr';
 
     return html`
-      <div class="cp">
-        <div class="cp-bar"><div class="cp-bar-pulse"></div></div>
-        <div class="cp-inner">
-          <div class="cp-bolt-badge">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="#30D158">
-              <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66l.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
-            </svg>
-          </div>
-          <div class="cp-time">${timeStr}</div>
-          <div class="cp-limit">Charge Limit: ${s.charge_limit ?? 80}%</div>
-          <div class="cp-sep"></div>
-          <div class="cp-stat">${s.charging_power ?? '--'} kW</div>
-          <div class="cp-stat">${s.charge_rate !== null ? Math.round(s.charge_rate) : '--'} ${ru}</div>
-          <div class="cp-stat">+${s.charge_energy_added ?? '--'} kWh</div>
-          <div class="cp-stat">${s.charge_current ?? '--'}/${s.charge_current ?? '--'} A</div>
-          <div class="cp-stat">${s.charger_voltage ?? '--'} V</div>
+      <div class="cp-bar"><div class="cp-bar-pulse"></div></div>
+      <div class="cp-inner">
+        <div class="cp-bolt">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="#30D158">
+            <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66l.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
+          </svg>
         </div>
+        <div class="cp-time">${timeStr}</div>
+        <div class="cp-limit">Charge Limit: ${s.charge_limit ?? 80}%</div>
+        <div class="cp-sep"></div>
+        <div class="cp-stat">${s.charging_power ?? '--'} kW</div>
+        <div class="cp-stat">${s.charge_rate !== null ? Math.round(s.charge_rate) : '--'} ${ru}</div>
+        <div class="cp-stat">+${s.charge_energy_added ?? '--'} kWh</div>
+        <div class="cp-stat">${s.charge_current ?? '--'}/${s.charge_current ?? '--'} A</div>
+        <div class="cp-stat">${s.charger_voltage ?? '--'} V</div>
       </div>
     `;
   }
 
-  private _pill(active: boolean, label: string, icon: any, fn: () => void) {
-    return html`<button class="pill ${active ? 'on' : ''}" @click=${fn}><span class="pill-ic">${icon}</span><span class="pill-lb">${label}</span></button>`;
+  private _act(active: boolean, iconOn: any, iconOff: any, label: string, fn: () => void) {
+    return html`
+      <button class="act ${active ? 'on' : ''}" @click=${fn}>
+        ${active ? iconOn : iconOff}
+        <span class="act-label">${label}</span>
+      </button>`;
   }
 
   private _toggleLock() { this.hass?.callService('lock', this.vehicleState.is_locked ? 'unlock' : 'lock', { entity_id: this.entityMap.door_lock }); }
   private _toggleClimate() { this.hass?.callService('climate', this.vehicleState.is_climate_on ? 'turn_off' : 'turn_on', { entity_id: this.entityMap.climate }); }
-  private _flashLights() { this.hass?.callService('button', 'press', { entity_id: this.entityMap.flash_lights }); }
-  private _toggleSentry() { this.hass?.callService('switch', this.vehicleState.sentry_mode ? 'turn_off' : 'turn_on', { entity_id: this.entityMap.sentry_mode }); }
+  private _ventWindows() { this.hass?.callService('cover', this.vehicleState.windows_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.windows }); }
+  private _toggleChargePort() { this.hass?.callService('cover', this.vehicleState.charger_door_open ? 'close_cover' : 'open_cover', { entity_id: this.entityMap.charger_door }); }
+  private _openFrunk() { this.hass?.callService('cover', 'open_cover', { entity_id: this.entityMap.frunk }); }
 
   static get styles() {
     return css`
@@ -98,7 +127,7 @@ class TeslaViewMain extends LitElement {
       .car-wrap tesla-vehicle-renderer { display: block; margin: 0 auto; }
 
       /* ══════════════════════════════════════════
-         CHARGE PANEL — pixel-perfect Tesla app
+         CHARGE PANEL + slide animation
          ══════════════════════════════════════════ */
       .cp {
         position: absolute;
@@ -109,14 +138,34 @@ class TeslaViewMain extends LitElement {
         display: flex;
         flex-direction: row;
         pointer-events: none;
-        background: linear-gradient(90deg, #1c1c1e, #1c1c1e00);
+        background: linear-gradient(90deg, #1c1c1e, #1c1c1e50 68%, #1c1c1e00);
       }
 
-      /* Green edge bar: 2px, subtle sweep animation going UP */
+      .cp-hidden { display: none; }
+
+      .cp-in {
+        animation: cp-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      .cp-out {
+        animation: cp-slide-out 0.35s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+      }
+
+      @keyframes cp-slide-in {
+        from { transform: translateX(-100%); opacity: 0; }
+        to   { transform: translateX(0); opacity: 1; }
+      }
+
+      @keyframes cp-slide-out {
+        from { transform: translateX(0); opacity: 1; }
+        to   { transform: translateX(-100%); opacity: 0; }
+      }
+
+      /* Green edge bar */
       .cp-bar {
         width: 4px;
         flex-shrink: 0;
-        background-color: color-mix(in oklab,lab(27.036% 0 0) 50%,transparent);
+        background-color: color-mix(in oklab, lab(27.036% 0 0) 50%, transparent);
         position: relative;
         overflow: hidden;
       }
@@ -128,7 +177,6 @@ class TeslaViewMain extends LitElement {
         background: linear-gradient(to top, transparent, rgb(37, 203, 85) 50%, transparent);
         animation: bar-up 2s ease-in-out infinite;
       }
-      /* Soft glow halo around the pulse */
       .cp-bar::after {
         content: '';
         position: absolute;
@@ -145,23 +193,18 @@ class TeslaViewMain extends LitElement {
         100% { bottom: 110%; }
       }
 
-      /* Panel content */
       .cp-inner {
         padding: 14px 0 14px 14px;
         display: flex;
         flex-direction: column;
       }
 
-      /* ⚡ Bolt on dark badge */
-      .cp-bolt-badge {
-        border-radius: 8px;
+      .cp-bolt {
         display: flex;
         align-items: flex-start;
-        justify-content: flex-start;
         margin-bottom: 10px;
       }
 
-      /* "4 hr 20 min remaining" */
       .cp-time {
         font-size: 15px;
         font-weight: 700;
@@ -171,7 +214,6 @@ class TeslaViewMain extends LitElement {
         letter-spacing: -0.2px;
       }
 
-      /* "Charge Limit: 80%" */
       .cp-limit {
         font-size: 13px;
         font-weight: 400;
@@ -179,7 +221,6 @@ class TeslaViewMain extends LitElement {
         line-height: 1.3;
       }
 
-      /* Separator */
       .cp-sep {
         height: 1px;
         background: rgba(255,255,255,0.08);
@@ -187,7 +228,6 @@ class TeslaViewMain extends LitElement {
         width: 85%;
       }
 
-      /* Stat lines */
       .cp-stat {
         font-size: 12px;
         font-weight: 500;
@@ -197,32 +237,66 @@ class TeslaViewMain extends LitElement {
       }
 
       /* ════════════════════════════════
-         ACTION PILLS
+         ACTIONS — icon only, no bg, green when active
          ════════════════════════════════ */
-      .actions { display: flex; justify-content: center; gap: 10px; padding: 4px 0 8px; position: relative; z-index: 9; }
-      .pill {
-        display: flex; flex-direction: column; align-items: center; gap: 6px;
-        padding: 12px 14px; border: 1px solid rgba(255,255,255,0.06);
-        background: rgba(255,255,255,0.04); color: var(--tesla-text-sec,#8a8a8e);
-        border-radius: 18px; cursor: pointer; min-width: 62px; font-size: 10px;
-        font-weight: 500; font-family: inherit;
-        transition: all .25s cubic-bezier(.4,0,.2,1);
-        -webkit-tap-highlight-color: transparent;
+      .actions {
+        display: flex;
+        justify-content: space-around;
+        padding: 4px 8px 8px;
+        position: relative;
+        z-index: 9;
       }
-      .pill:active { transform: scale(.94); }
-      .pill.on { background: rgba(77,208,225,.1); border-color: rgba(77,208,225,.25); color: #4dd0e1; }
-      .pill-ic svg { width: 22px; height: 22px; fill: currentColor; }
-      .pill-lb { letter-spacing: .2px; }
+
+      .act {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 0;
+        border: none;
+        background: none;
+        color: rgba(255,255,255,0.40);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: color 0.25s ease, transform 0.15s ease;
+        min-width: 48px;
+        font-family: inherit;
+      }
+
+      .act:active { transform: scale(0.88); }
+
+      .act.on { color: #30D158; }
+
+      .act svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+      }
+
+      .act-label {
+        font-size: 9px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+        color: inherit;
+      }
     `;
   }
 }
 
 customElements.define('tesla-view-main', TeslaViewMain);
 
-const iconLock = html`<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>`;
-const iconUnlock = html`<svg viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></svg>`;
-const iconClimate = html`<svg viewBox="0 0 24 24"><path d="M15 13V5c0-1.66-1.34-3-3-3S9 3.34 9 5v8c-1.21.91-2 2.37-2 4 0 2.76 2.24 5 5 5s5-2.24 5-5c0-1.63-.79-3.09-2-4zm-4-8c0-.55.45-1 1-1s1 .45 1 1h-1v1h1v2h-1v1h1v2h-2V5z"/></svg>`;
-const iconFlash = html`<svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>`;
-const iconSentry = html`<svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>`;
+// Lock (Tesla official)
+const iconLock = html`<svg viewBox="24 13 55 67" fill="none"><path fill-rule="evenodd" d="M50.99 77.50Q57.83 77.51 64.65 77.48Q70.63 77.45 72.13 76.54Q75.34 74.60 75.50 69.97Q75.51 69.54 75.53 49.12Q75.53 44.58 74.78 42.99C73.19 39.67 71.02 39.64 67.91 38.89A0.67 0.67 0 0 1 67.40 38.23Q67.40 35.66 67.39 32.00C67.36 22.81 60.29 15.63 51.01 15.62C41.74 15.62 34.65 22.80 34.62 31.99Q34.61 35.65 34.60 38.22A0.67 0.67 0 0 1 34.09 38.88C30.98 39.63 28.81 39.65 27.22 42.97Q26.47 44.56 26.47 49.10Q26.47 69.52 26.48 69.95Q26.64 74.58 29.85 76.52Q31.35 77.44 37.32 77.47Q44.15 77.50 50.99 77.50ZM39.95 39.00L62.05 39.00A0.57 0.57 0 0 0 62.62 38.43L62.62 32.80A12.30 11.49 90 0 0 51.13 20.50L50.87 20.50A12.30 11.49-90 0 0 39.38 32.80L39.38 38.43A0.57 0.57 0 0 0 39.95 39.00Z" fill="currentColor"/></svg>`;
+// Unlock (Tesla official)
+const iconUnlock = html`<svg viewBox="9 8 70 72" fill="none"><path d="M40.40 38.59Q40.36 34.85 40.40 30.78C40.59 12.29 14.89 9.87 11.12 28.42Q10.72 30.40 11.06 39.05A2.32 2.32 0 0 0 13.48 41.28L13.62 41.27A2.49 2.47-0.7 0 0 16.00 38.84C16.11 32.12 14.37 23.96 22.61 21.05C29.36 18.67 35.69 23.94 35.58 31.01C35.55 33.00 35.62 35.47 35.64 38.32A0.61 0.61 0 0 1 35.06 38.93C28.68 39.34 27.42 43.04 27.45 49.16Q27.53 65.87 27.49 69.49Q27.43 74.12 30.42 76.22Q32.31 77.55 37.81 77.54Q67.64 77.47 69.25 77.49C75.03 77.57 76.72 72.91 76.54 67.41Q76.48 65.49 76.49 46.01C76.50 40.38 71.80 38.79 66.45 38.97Q65.09 39.02 40.79 38.98A0.39 0.39 0 0 1 40.40 38.59Z" fill="currentColor"/></svg>`;
+// Vent / window (Tesla official)
+const iconVent = html`<svg viewBox="50 18 68 68" fill="none"><path fill-rule="evenodd" d="M111.27 78.92Q109.11 81.07 106.78 81.13Q95.78 81.41 65.02 81.23C59.91 81.20 56.97 80.63 54.89 76.43Q54.16 74.97 54.19 71.59Q54.24 66.54 54.30 49.50Q54.32 44.66 57.67 41.19Q61.57 37.15 63.93 34.86Q64.80 34.02 65.67 33.15Q66.55 32.28 67.39 31.41Q69.69 29.06 73.75 25.18Q77.23 21.84 82.07 21.84Q99.11 21.85 104.16 21.82Q107.54 21.80 109.00 22.54C113.19 24.63 113.75 27.58 113.76 32.69Q113.82 63.45 113.49 74.45Q113.43 76.78 111.27 78.92ZM83.75 27.99C81.05 28.02 79.19 28.89 76.51 31.54Q69.41 38.56 63.00 45.00Q61.41 46.60 60.75 47.69A0.52 0.51-74.3 0 0 61.18 48.47L67.86 48.47A2.12 2.10-67.3 0 0 69.35 47.85L80.69 36.52A5.50 5.45-67.4 0 1 84.57 34.90L106.11 34.90A1.35 1.34 0 0 0 107.46 33.56L107.46 29.95A1.95 1.95 0 0 0 105.53 28.00Q93.62 27.86 83.75 27.99ZM107.26 54.95L60.62 54.87A0.23 0.23 0 0 0 60.39 55.10L60.36 72.14A3.11 2.81 0.1 0 0 63.46 74.95L104.34 75.03A3.11 2.81 0.1 0 0 107.46 72.22L107.49 55.18A0.23 0.23 0 0 0 107.26 54.95Z" fill="currentColor"/></svg>`;
+// Charge port (Tesla official)
+const iconChargePort = html`<svg viewBox="26 16 52 74" fill="none"><path d="M51.01 87.78A1.18 1.18 0 0 1 50.37 86.73L50.37 60.48A1.13 1.12 0 0 0 49.24 59.36L29.66 59.36A1.29 1.29 0 0 1 28.55 57.42Q45.62 28.22 50.98 19.00Q51.34 18.39 51.62 18.22A1.33 1.33 0 0 1 53.64 19.35Q53.64 40.75 53.65 45.40A1.25 1.25 0 0 0 54.90 46.65L74.31 46.65A1.33 1.32 15.1 0 1 75.46 48.64Q55.89 82.01 53.16 86.88Q52.29 88.43 51.01 87.78Z" fill="currentColor"/></svg>`;
+// Frunk (Tesla official)
+// Frunk (Tesla official)
+const iconFrunk = html`<svg viewBox="14 17 76 72" fill="none"><path fill-rule="evenodd" d="M57.79 39.34Q38.56 39.68 21.86 47.46C19.22 48.69 17.23 50.25 17.07 53.04Q16.93 55.37 17.03 68.26C17.07 73.04 20.96 75.04 25.71 75.29Q26.41 75.32 32.58 75.95A1.66 1.64 74.8 0 1 33.77 76.64C40.31 85.79 52.81 85.66 59.62 76.85A0.88 0.87 18.1 0 1 60.32 76.50L83.64 76.50A3.20 3.20 0 0 0 86.84 73.30L86.84 72.83A3.33 3.33 0 0 0 83.51 69.50L63.06 69.50A0.57 0.57 0 0 1 62.49 68.91Q62.68 60.78 56.96 55.79C53.25 52.55 47.23 51.07 42.75 52.52Q31.34 56.18 30.93 68.49A0.25 0.25 0 0 1 30.65 68.73L24.34 68.12A0.37 0.37 0 0 1 24.00 67.75L24.00 54.81A1.05 1.04-12.4 0 1 24.61 53.86Q44.11 44.94 64.71 46.71A5.57 5.52 34.1 0 0 67.63 46.16L85.07 37.63A3.41 3.41 0 0 0 86.67 33.15L86.62 33.04A3.44 3.43 64.9 0 0 81.97 31.35L68.32 38.05A0.92 0.91 53.8 0 1 67.27 37.88Q52.58 23.40 30.83 19.69A3.40 3.40 0 0 0 26.91 22.47L26.87 22.69A3.44 3.44 0 0 0 29.73 26.66Q45.63 29.14 57.95 38.87A0.26 0.26 0 0 1 57.79 39.34ZM55.47 67.75A8.72 8.72 0 0 0 46.75 59.03A8.72 8.72 0 0 0 38.03 67.75A8.72 8.72 0 0 0 46.75 76.47A8.72 8.72 0 0 0 55.47 67.75Z" fill="currentColor"/></svg>`;
+// Climate / fan (Tesla official — 4 blades only)
+const iconClimate = html`<svg viewBox="16 13 76 76" fill="none"><path d="M52.27 46.50L52.23 18.72A2.65 2.65 0 0 0 49.57 16.08L49.36 16.08A16.43 16.36 89.9 0 0 33.03 32.54L33.03 32.76A16.43 16.36 89.9 0 0 49.42 49.16L49.63 49.16A2.65 2.65 0 0 0 52.27 46.50Z" fill="currentColor"/><path d="M58.37 49.25L86.39 49.25A2.53 2.53 0 0 0 88.92 46.72L88.92 46.39A16.42 16.36 0 0 0 72.50 30.03L72.26 30.03A16.42 16.36 0 0 0 55.84 46.39L55.84 46.72A2.53 2.53 0 0 0 58.37 49.25Z" fill="currentColor"/><path d="M49.55 52.72L21.69 52.76A2.62 2.62 0 0 0 19.08 55.39L19.08 55.62A16.44 16.37-0.1 0 0 35.55 71.96L35.77 71.96A16.44 16.37-0.1 0 0 52.18 55.56L52.18 55.33A2.62 2.62 0 0 0 49.55 52.72Z" fill="currentColor"/><path d="M55.72 55.36L55.76 83.38A2.53 2.53 0 0 0 58.30 85.90L58.62 85.90A16.44 16.37 89.9 0 0 74.96 69.43L74.96 69.23A16.44 16.37 89.9 0 0 58.56 52.82L58.24 52.82A2.53 2.53 0 0 0 55.72 55.36Z" fill="currentColor"/></svg>`;
 
 export { TeslaViewMain };

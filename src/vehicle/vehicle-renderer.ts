@@ -26,9 +26,10 @@ class TeslaVehicleRenderer extends LitElement {
       .scene {
         position: relative;
         width: 100%;
-        aspect-ratio: 72 / 25;
+        aspect-ratio: 72 / 34;
         overflow: visible;
-        margin-bottom: -10%;
+        margin-bottom: -20%;
+        transform: scale(1.15);
       }
 
       .ambient {
@@ -38,7 +39,7 @@ class TeslaVehicleRenderer extends LitElement {
 
       .car-clip {
         width: 100%;
-        aspect-ratio: 72 / 32;
+        aspect-ratio: 72 / 34;
         overflow: hidden;
         position: relative;
         z-index: 1;
