@@ -83,8 +83,28 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
 
   const isCharging = chargingSwitch?.state === 'on';
 
-  // Time to full: keep raw value, let the view format it
-  const rawTime = getNumericState(hass, entityMap.time_to_full_charge);
+  // Time to full: can be minutes, hours, or ISO timestamp
+  const timeEntity = getState(hass, entityMap.time_to_full_charge);
+  let timeToFullMin: number | null = null;
+  if (timeEntity && timeEntity.state !== 'unavailable' && timeEntity.state !== 'unknown') {
+    const sv = timeEntity.state;
+    const parsed = Date.parse(sv);
+    if (!isNaN(parsed)) {
+      // ISO timestamp — compute minutes from now
+      timeToFullMin = Math.max(0, Math.round((parsed - Date.now()) / 60000));
+    } else {
+      const num = parseFloat(sv);
+      if (!isNaN(num)) {
+        const unit = (timeEntity.attributes?.unit_of_measurement || '').toLowerCase();
+        if (unit.startsWith('h') || unit === 'hours') {
+          timeToFullMin = Math.round(num * 60);
+        } else {
+          // Default: minutes
+          timeToFullMin = Math.round(num);
+        }
+      }
+    }
+  }
 
   return {
     battery_level:          getNumericState(hass, entityMap.battery_level),
@@ -106,7 +126,7 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
     charge_rate:            getNumericState(hass, entityMap.charge_rate),
     charge_energy_added:    getNumericState(hass, entityMap.charge_energy_added),
     charger_voltage:        getNumericState(hass, entityMap.charger_voltage),
-    time_to_full_charge:    rawTime,
+    time_to_full_charge:    timeToFullMin,
     odometer:               getNumericState(hass, entityMap.odometer),
     odometer_unit:          odometerEntity?.attributes?.unit_of_measurement || 'km',
     sentry_mode:            getBoolState(hass, entityMap.sentry_mode),
