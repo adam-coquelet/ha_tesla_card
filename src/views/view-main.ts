@@ -188,7 +188,7 @@ class TeslaViewMain extends LitElement {
         display: flex;
         flex-direction: row;
         pointer-events: none;
-        background: linear-gradient(90deg, #1c1c1e, #1c1c1e50 68%, #1c1c1e00);
+        background: linear-gradient(90deg, #1c1c1e, #1c1c1ea0 59%, #1c1c1e00);
       }
 
       .cp-hidden { display: none; }
@@ -347,7 +347,7 @@ class TeslaViewMain extends LitElement {
         z-index: 5;
         pointer-events: none;
         background: linear-gradient(270deg, #1c1c1e, #1c1c1ecc 56%, #1c1c1e00);
-        padding-left: 48px;
+        padding-left: 58px;
       }
 
       .cl-hidden { display: none !important; }
