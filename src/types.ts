@@ -14,6 +14,28 @@ export interface TeslaCardConfig {
   show_trunk?: boolean;
   show_vent?: boolean;
   show_climate?: boolean;
+  // Entity overrides (for translated HA instances)
+  entity_battery_level?: string;
+  entity_battery_range?: string;
+  entity_lock?: string;
+  entity_climate?: string;
+  entity_frunk?: string;
+  entity_trunk?: string;
+  entity_charge_port?: string;
+  entity_windows?: string;
+  entity_charging?: string;
+  entity_sentry?: string;
+  entity_charger_power?: string;
+  entity_charge_rate?: string;
+  entity_charge_energy?: string;
+  entity_charger_voltage?: string;
+  entity_charger_current?: string;
+  entity_time_to_full?: string;
+  entity_charge_limit?: string;
+  entity_online?: string;
+  entity_inside_temp?: string;
+  entity_outside_temp?: string;
+  entity_odometer?: string;
 }
 
 export type VehicleVariant = 'standard' | 'long_range' | 'performance';

@@ -1,70 +1,48 @@
-import { TeslaEntityMap, TeslaVehicleState, HassEntity, Hass } from './types';
+import { TeslaEntityMap, TeslaVehicleState, TeslaCardConfig, HassEntity, Hass } from './types';
 
 /**
- * Entity key suffixes from the official Tesla Fleet HA integration.
- * Source: github.com/home-assistant/core/tree/dev/homeassistant/components/tesla_fleet
+ * Build entity map from config.
+ * Uses explicit entity overrides if set, otherwise falls back to
+ * Tesla Fleet default naming: domain.{prefix}_{key}
  */
-export function buildEntityMap(prefix: string, _hass?: Hass): TeslaEntityMap {
-  const p = prefix;
+export function buildEntityMap(config: TeslaCardConfig): TeslaEntityMap {
+  const p = config.entity_prefix;
   return {
-    // climate.py — key: "driver_temp"
-    climate:                `climate.${p}_driver_temp`,
-
-    // lock.py — keys: "vehicle_state_locked", "charge_state_charge_port_latch"
-    door_lock:              `lock.${p}_vehicle_state_locked`,
+    climate:                config.entity_climate          || `climate.${p}_driver_temp`,
+    door_lock:              config.entity_lock             || `lock.${p}_vehicle_state_locked`,
     charge_cable_lock:      `lock.${p}_charge_state_charge_port_latch`,
-
-    // cover.py — keys: "vehicle_state_ft", "vehicle_state_rt", "charge_state_charge_port_door_open", "windows"
-    frunk:                  `cover.${p}_vehicle_state_ft`,
-    trunk:                  `cover.${p}_vehicle_state_rt`,
-    charger_door:           `cover.${p}_charge_state_charge_port_door_open`,
-    windows:                `cover.${p}_windows`,
-
-    // switch.py — keys: "vehicle_state_sentry_mode", "climate_state_defrost_mode", "charge_state_charging_state"
-    charging:               `switch.${p}_charge_state_charging_state`,
-    sentry_mode:            `switch.${p}_vehicle_state_sentry_mode`,
+    frunk:                  config.entity_frunk            || `cover.${p}_vehicle_state_ft`,
+    trunk:                  config.entity_trunk            || `cover.${p}_vehicle_state_rt`,
+    charger_door:           config.entity_charge_port      || `cover.${p}_charge_state_charge_port_door_open`,
+    windows:                config.entity_windows          || `cover.${p}_windows`,
+    charging:               config.entity_charging         || `switch.${p}_charge_state_charging_state`,
+    sentry_mode:            config.entity_sentry           || `switch.${p}_vehicle_state_sentry_mode`,
     defrost:                `switch.${p}_climate_state_defrost_mode`,
-
-    // sensor.py — vehicle sensor keys
-    battery_level:          `sensor.${p}_charge_state_battery_level`,
-    battery_range:          `sensor.${p}_charge_state_battery_range`,
-    inside_temperature:     `sensor.${p}_climate_state_inside_temp`,
-    outside_temperature:    `sensor.${p}_climate_state_outside_temp`,
-    odometer:               `sensor.${p}_vehicle_state_odometer`,
-    charging_power:         `sensor.${p}_charge_state_charger_power`,
-    charge_rate:            `sensor.${p}_charge_state_charge_rate`,
-    charge_energy_added:    `sensor.${p}_charge_state_charge_energy_added`,
-    charger_voltage:        `sensor.${p}_charge_state_charger_voltage`,
-    charger_current:        `sensor.${p}_charge_state_charger_actual_current`,
-    time_to_full_charge:    `sensor.${p}_charge_state_minutes_to_full_charge`,
-
-    // binary_sensor.py — keys: "state", "vehicle_state_is_user_present"
+    battery_level:          config.entity_battery_level    || `sensor.${p}_charge_state_battery_level`,
+    battery_range:          config.entity_battery_range    || `sensor.${p}_charge_state_battery_range`,
+    inside_temperature:     config.entity_inside_temp      || `sensor.${p}_climate_state_inside_temp`,
+    outside_temperature:    config.entity_outside_temp     || `sensor.${p}_climate_state_outside_temp`,
+    odometer:               config.entity_odometer         || `sensor.${p}_vehicle_state_odometer`,
+    charging_power:         config.entity_charger_power    || `sensor.${p}_charge_state_charger_power`,
+    charge_rate:            config.entity_charge_rate      || `sensor.${p}_charge_state_charge_rate`,
+    charge_energy_added:    config.entity_charge_energy    || `sensor.${p}_charge_state_charge_energy_added`,
+    charger_voltage:        config.entity_charger_voltage  || `sensor.${p}_charge_state_charger_voltage`,
+    charger_current:        config.entity_charger_current  || `sensor.${p}_charge_state_charger_actual_current`,
+    time_to_full_charge:    config.entity_time_to_full     || `sensor.${p}_charge_state_minutes_to_full_charge`,
     is_charging:            `binary_sensor.${p}_charge_state_conn_charge_cable`,
-    is_online:              `binary_sensor.${p}_state`,
+    is_online:              config.entity_online           || `binary_sensor.${p}_state`,
     user_present:           `binary_sensor.${p}_vehicle_state_is_user_present`,
-
-    // button.py — keys: "honk", "flash_lights", "wake"
     honk_horn:              `button.${p}_honk`,
     flash_lights:           `button.${p}_flash_lights`,
     wake:                   `button.${p}_wake`,
-
-    // number.py — keys: "charge_state_charge_limit_soc", "charge_state_charge_current_request"
-    charge_limit:           `number.${p}_charge_state_charge_limit_soc`,
+    charge_limit:           config.entity_charge_limit     || `number.${p}_charge_state_charge_limit_soc`,
     charge_current_number:  `number.${p}_charge_state_charge_current_request`,
-
-    // device_tracker.py — key: "location"
     location:               `device_tracker.${p}_location`,
-
-    // select.py — seat heater keys
     seat_heater_front_left: `select.${p}_climate_state_seat_heater_left`,
     seat_heater_front_right:`select.${p}_climate_state_seat_heater_right`,
     seat_heater_rear_left:  `select.${p}_climate_state_seat_heater_rear_left`,
     seat_heater_rear_right: `select.${p}_climate_state_seat_heater_rear_right`,
-
-    // switch.py — key: "climate_state_auto_steering_wheel_heat"
     steering_wheel_heater:  `switch.${p}_climate_state_auto_steering_wheel_heat`,
-
-    // update.py — key: "vehicle_state_software_update_status"
     firmware:               `update.${p}_vehicle_state_software_update_status`,
   };
 }
@@ -103,14 +81,11 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
   const firmwareEntity = getState(hass, entityMap.firmware);
   const chargingSwitch = getState(hass, entityMap.charging);
 
-  // Tesla Fleet uses "charge_state_charging_state" sensor for charging status
-  // and "charge_state_conn_charge_cable" binary sensor for cable connected
-  // The switch "charge_state_charging_state" state is 'on' when charging is enabled
   const isCharging = chargingSwitch?.state === 'on';
 
-  // Time to full charge is in MINUTES in Tesla Fleet
-  const minutesToFull = getNumericState(hass, entityMap.time_to_full_charge);
-  const hoursToFull = minutesToFull !== null ? minutesToFull / 60 : null;
+  // Time: Tesla Fleet returns minutes, convert to hours
+  const rawTime = getNumericState(hass, entityMap.time_to_full_charge);
+  const hoursToFull = rawTime !== null ? (rawTime > 10 ? rawTime / 60 : rawTime) : null;
 
   return {
     battery_level:          getNumericState(hass, entityMap.battery_level),
@@ -118,7 +93,7 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
     range_unit:             rangeEntity?.attributes?.unit_of_measurement || 'km',
     is_locked:              getState(hass, entityMap.door_lock)?.state === 'locked',
     is_charging:            isCharging,
-    is_online:              getState(hass, entityMap.is_online)?.state === 'online',
+    is_online:              (() => { const s = getState(hass, entityMap.is_online)?.state; return s === 'online' || s === 'on'; })(),
     is_climate_on:          climate?.state !== 'off' && climate?.state !== 'unavailable' && climate?.state !== undefined,
     climate_target_temp:    climate?.attributes?.temperature ?? null,
     climate_current_temp:   climate?.attributes?.current_temperature ?? null,
@@ -141,7 +116,7 @@ export function extractVehicleState(hass: Hass, entityMap: TeslaEntityMap): Tesl
     trunk_open:             getCoverOpen(hass, entityMap.trunk),
     charger_door_open:      getCoverOpen(hass, entityMap.charger_door),
     windows_open:           getCoverOpen(hass, entityMap.windows),
-    firmware_version:       firmwareEntity?.attributes?.installed_version ?? firmwareEntity?.attributes?.latest_version ?? null,
+    firmware_version:       firmwareEntity?.attributes?.installed_version ?? null,
     firmware_update_available: firmwareEntity?.state === 'on',
     seat_heater_front_left: getState(hass, entityMap.seat_heater_front_left)?.state || 'off',
     seat_heater_front_right:getState(hass, entityMap.seat_heater_front_right)?.state || 'off',

@@ -29,7 +29,7 @@ run('git push origin main');
 run(`git tag -a ${tag} -m "${tag}"`);
 run(`git push origin ${tag}`);
 
-// 6. Create GitHub release with all dist assets
-run(`gh release create ${tag} dist/tesla-card.js dist/pictures/*.png --title "${tag}" --generate-notes`);
+// 6. Create GitHub release (images are embedded in the JS)
+run(`gh release create ${tag} dist/tesla-card.js --title "${tag}" --generate-notes`);
 
 console.log(`\n✓ ${tag} released with dist/tesla-card.js`);

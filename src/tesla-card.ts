@@ -27,21 +27,13 @@ class TeslaCard extends LitElement {
       throw new Error('Please define entity_prefix');
     }
     this._config = { ...DEFAULT_CONFIG, ...config };
-    this._entityMap = buildEntityMap(this._config.entity_prefix);
-    this._entityMapResolved = false;
+    this._entityMap = buildEntityMap(this._config);
   }
-
-  private _entityMapResolved = false;
 
   set hass(hass: Hass) {
     const oldHass = (this as any).__hass;
     (this as any).__hass = hass;
-    if (hass && this._config) {
-      // Auto-detect entity IDs on first hass update
-      if (!this._entityMapResolved) {
-        this._entityMap = buildEntityMap(this._config.entity_prefix, hass);
-        this._entityMapResolved = true;
-      }
+    if (hass && this._entityMap) {
       this._vehicleState = extractVehicleState(hass, this._entityMap);
     }
     this.requestUpdate('hass', oldHass);
