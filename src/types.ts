@@ -4,15 +4,20 @@ export interface TeslaCardConfig {
   vehicle_model: VehicleModel;
   vehicle_variant?: VehicleVariant;
   paint_color: string;
-  image_path?: string; // custom override: /local/community/ha-tesla-card/pictures/
+  image_path?: string;
   name?: string;
   show_vehicle?: boolean;
   default_view?: ViewType;
+  show_lock?: boolean;
+  show_charge_port?: boolean;
+  show_frunk?: boolean;
+  show_vent?: boolean;
+  show_climate?: boolean;
 }
 
-export type VehicleVariant = 'standard' | 'performance';
+export type VehicleVariant = 'standard' | 'long_range' | 'performance';
 
-export type VehicleModel = 'model_s' | 'model_3' | 'model_x' | 'model_y' | 'cybertruck';
+export type VehicleModel = 'model_3' | 'model_y' | 'cybertruck' | 'cybercab';
 export type ViewType = 'main' | 'controls' | 'climate' | 'charging' | 'status';
 
 export interface TeslaEntityMap {

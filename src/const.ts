@@ -18,15 +18,15 @@ export const PAINT_COLORS: Record<string, PaintColor> = {
 };
 
 export const VEHICLE_MODELS: Record<string, string> = {
-  model_s: 'Model S',
   model_3: 'Model 3',
-  model_x: 'Model X',
   model_y: 'Model Y',
   cybertruck: 'Cybertruck',
+  cybercab: 'Cybercab',
 };
 
 export const VEHICLE_VARIANTS: Record<string, string> = {
   standard: 'Standard',
+  long_range: 'Long Range',
   performance: 'Performance',
 };
 
@@ -36,4 +36,9 @@ export const DEFAULT_CONFIG = {
   paint_color: 'pearl_white',
   show_vehicle: true,
   default_view: 'main' as const,
+  show_lock: true,
+  show_charge_port: true,
+  show_frunk: true,
+  show_vent: true,
+  show_climate: true,
 };

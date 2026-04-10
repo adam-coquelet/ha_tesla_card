@@ -90,6 +90,10 @@
       min-width: 120px;
     }
 
+    .sim-row label.toggle {
+      min-width: unset;
+    }
+
     .sim-row .value {
       font-size: 13px;
       font-weight: 500;
@@ -134,15 +138,17 @@
     /* Toggle Switch */
     .toggle {
       position: relative;
-      width: 44px;
+      width: 42px;
       height: 24px;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     .toggle input {
       opacity: 0;
       width: 0;
       height: 0;
+      position: absolute;
     }
 
     .toggle-slider {
@@ -156,21 +162,22 @@
     .toggle-slider::before {
       content: '';
       position: absolute;
-      width: 18px;
-      height: 18px;
-      left: 3px;
-      top: 3px;
+      width: 20px;
+      height: 20px;
+      left: 2px;
+      top: 2px;
       background: #fff;
       border-radius: 50%;
       transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
 
     .toggle input:checked + .toggle-slider {
-      background: #4dd0e1;
+      background: #30D158;
     }
 
     .toggle input:checked + .toggle-slider::before {
-      transform: translateX(20px);
+      transform: translateX(18px);
     }
 
     /* Service call log */
@@ -252,29 +259,22 @@
           <label>Model</label>
           <select id="sim-model">
             <option value="model_3" selected>Model 3</option>
-            <option value="model_s">Model S</option>
-            <option value="model_x">Model X</option>
             <option value="model_y">Model Y</option>
             <option value="cybertruck">Cybertruck</option>
+            <option value="cybercab">Cybercab</option>
           </select>
         </div>
         <div class="sim-row">
           <label>Variant</label>
           <select id="sim-variant">
             <option value="standard" selected>Standard</option>
+            <option value="long_range">Long Range</option>
             <option value="performance">Performance</option>
           </select>
         </div>
         <div class="sim-row">
           <label>Color</label>
-          <select id="sim-color">
-            <option value="pearl_white" selected>Pearl White</option>
-            <option value="ultra_red">Ultra Red</option>
-            <option value="quicksilver">Quicksilver</option>
-            <option value="diamond_black">Diamond Black</option>
-            <option value="deep_blue">Deep Blue Metallic</option>
-            <option value="stealth_grey">Stealth Grey</option>
-          </select>
+          <select id="sim-color"></select>
         </div>
       </div>
 
@@ -591,8 +591,49 @@
       };
     }
 
+    const ALL_COLORS = {
+      pearl_white: 'Pearl White',
+      ultra_red: 'Ultra Red',
+      quicksilver: 'Quicksilver',
+      diamond_black: 'Diamond Black',
+      deep_blue: 'Deep Blue',
+      stealth_grey: 'Stealth Grey',
+    };
+
+    // Color availability per model_variant (null = all)
+    const COLOR_LIMITS = {
+      'model_y_standard': ['pearl_white', 'diamond_black', 'stealth_grey'],
+      'model_y_performance': null, // all 6
+      'model_y_long_range': null,
+      'cybertruck_standard': ['pearl_white'],
+      'cybercab_standard': ['pearl_white'],
+    };
+
+    function updateColorSelect() {
+      const model = document.getElementById('sim-model').value;
+      const variant = document.getElementById('sim-variant').value;
+      const sel = document.getElementById('sim-color');
+      const currentVal = sel.value;
+      const key = `${model}_${variant}`;
+      const allowed = COLOR_LIMITS[key] || Object.keys(ALL_COLORS);
+
+      sel.innerHTML = '';
+      allowed.forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = ALL_COLORS[k] || k;
+        if (k === currentVal) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      // If current color not in list, select first
+      if (!allowed.includes(currentVal)) {
+        sel.value = allowed[0];
+      }
+    }
+
     function updateConfig() {
       if (!cardEl) return;
+      updateColorSelect();
       const model = document.getElementById('sim-model').value;
       const variant = document.getElementById('sim-variant').value;
       const color = document.getElementById('sim-color').value;
@@ -603,7 +644,6 @@
         vehicle_variant: variant,
         paint_color: color,
         image_path: '../src/pictures',
-        name: 'My Tesla',
       });
       updateState();
     }
@@ -612,6 +652,7 @@
       cardEl = document.createElement('tesla-card');
       document.getElementById('card-root').appendChild(cardEl);
 
+      updateColorSelect();
       updateConfig();
 
       // Config changes
