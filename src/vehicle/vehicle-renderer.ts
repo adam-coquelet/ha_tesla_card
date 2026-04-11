@@ -30,7 +30,7 @@ class TeslaVehicleRenderer extends LitElement {
         aspect-ratio: 72 / 34;
         overflow: visible;
         margin-top: -2%;
-        margin-bottom: -24%;
+        margin-bottom: -26%;
         transform: scale(1.15);
       }
 
