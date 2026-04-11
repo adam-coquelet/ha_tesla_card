@@ -434,7 +434,7 @@ class TeslaViewMain extends LitElement {
       }
 
       .cl-inner {
-        padding: 12px 16px 56px 20px;
+        padding: 12px 16px 60px 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -484,7 +484,7 @@ class TeslaViewMain extends LitElement {
         font-size: 10px;
         font-weight: 400;
         color: rgba(255,255,255,0.25);
-        line-height: 1.5;
+        line-height: 1.2;
       }
     `;
   }
