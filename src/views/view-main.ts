@@ -434,7 +434,7 @@ class TeslaViewMain extends LitElement {
       }
 
       .cl-inner {
-        padding: 12px 16px 60px 20px;
+        padding: 12px 16px 66px 20px;
         display: flex;
         flex-direction: column;
         align-items: center;

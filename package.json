@@ -1,6 +1,6 @@
 {
   "name": "ha-tesla-card",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "Tesla app-style Lovelace card for Home Assistant",
   "main": "dist/tesla-card.js",
   "type": "module",
